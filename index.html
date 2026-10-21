@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101014">
+  <title>SM - Sohel & Mou</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #101014;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+    }
+    .app {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      padding: 24px 18px;
+      background: linear-gradient(160deg,#211219,#101014 55%);
+    }
+    header { text-align: center; padding: 24px 0; }
+    .logo {
+      width: 82px; height: 82px;
+      margin: auto;
+      border-radius: 28px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg,#ff3158,#941b48);
+      font-size: 30px; font-weight: bold;
+      box-shadow: 0 0 30px #ff315844;
+    }
+    h1 { margin-bottom: 6px; font-size: 30px; }
+    .sub { color: #c2aab3; }
+    .card {
+      background: #ffffff0b;
+      border: 1px solid #ffffff18;
+      border-radius: 18px;
+      padding: 18px;
+      margin: 14px 0;
+    }
+    .people { display: flex; gap: 12px; }
+    .person {
+      flex: 1; text-align: center;
+      background: #ffffff08;
+      border-radius: 14px; padding: 15px 4px;
+    }
+    .avatar { font-size: 34px; }
+    .name { font-weight: bold; margin-top: 8px; }
+    .status { color: #9dd7a7; font-size: 12px; margin-top: 5px; }
+    button {
+      border: 0; border-radius: 13px;
+      padding: 15px 10px; color: white;
+      font-size: 15px; font-weight: bold;
+      cursor: pointer;
+    }
+    .call {
+      width: 100%; margin-top: 10px;
+      background: #d52e59;
+    }
+    .video { background: #6639b7; }
+    .note { color: #bcb4c0; font-size: 13px; line-height: 1.6; }
+    footer { text-align: center; color: #8e7c87; font-size: 12px; padding: 20px 0; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="logo">SM</div>
+      <h1>SM ❤️</h1>
+      <div class="sub">Sohel & Mou — Just Us Two</div>
+    </header>
+
+    <section class="card">
+      <h3>💞 Our Little World</h3>
+      <div class="people">
+        <div class="person">
+          <div class="avatar">👨</div>
+          <div class="name">Sohel</div>
+          <div class="status">Your King 👑</div>
+        </div>
+        <div class="person">
+          <div class="avatar">👩</div>
+          <div class="name">Mou</div>
+          <div class="status">Your Queen 👑</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>📞 Stay Connected</h3>
+      <button class="call" onclick="demo('Audio call')">
+        🎙️ Audio Call
+      </button>
+      <button class="call video" onclick="demo('Video call')">
+        📹 Video Call
+      </button>
+      <p class="note">
+        Calls will be enabled after we connect a secure
+        calling service.
+      </p>
+    </section>
+
+    <section class="card">
+      <h3>💌 A Little Love Note</h3>
+      <p>Every day is special when I have you, Mou. ❤️</p>
+      <p class="note">Made with love, for Sohel & Mou.</p>
+    </section>
+
+    <footer>SM • Our Private Little World ❤️</footer>
+  </main>
+
+  <script>
+    function demo(type) {
+      alert(type + " is not connected yet. Coming soon! ❤️");
+    }
+  </script>
+</body>
+</html>
