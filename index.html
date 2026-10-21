@@ -1,123 +1,111 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101014">
-  <title>SM - Sohel & Mou</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #101014;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-    }
-    .app {
-      width: 100%;
-      max-width: 430px;
-      min-height: 100vh;
-      padding: 24px 18px;
-      background: linear-gradient(160deg,#211219,#101014 55%);
-    }
-    header { text-align: center; padding: 24px 0; }
-    .logo {
-      width: 82px; height: 82px;
-      margin: auto;
-      border-radius: 28px;
-      display: grid; place-items: center;
-      background: linear-gradient(135deg,#ff3158,#941b48);
-      font-size: 30px; font-weight: bold;
-      box-shadow: 0 0 30px #ff315844;
-    }
-    h1 { margin-bottom: 6px; font-size: 30px; }
-    .sub { color: #c2aab3; }
-    .card {
-      background: #ffffff0b;
-      border: 1px solid #ffffff18;
-      border-radius: 18px;
-      padding: 18px;
-      margin: 14px 0;
-    }
-    .people { display: flex; gap: 12px; }
-    .person {
-      flex: 1; text-align: center;
-      background: #ffffff08;
-      border-radius: 14px; padding: 15px 4px;
-    }
-    .avatar { font-size: 34px; }
-    .name { font-weight: bold; margin-top: 8px; }
-    .status { color: #9dd7a7; font-size: 12px; margin-top: 5px; }
-    button {
-      border: 0; border-radius: 13px;
-      padding: 15px 10px; color: white;
-      font-size: 15px; font-weight: bold;
-      cursor: pointer;
-    }
-    .call {
-      width: 100%; margin-top: 10px;
-      background: #d52e59;
-    }
-    .video { background: #6639b7; }
-    .note { color: #bcb4c0; font-size: 13px; line-height: 1.6; }
-    footer { text-align: center; color: #8e7c87; font-size: 12px; padding: 20px 0; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SM - Sohel & Mou</title>
+<script src="https://unpkg.com/peerjs@1.5.3/dist/peerjs.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
+body{background:#101014;color:#fff;display:flex;justify-content:center;min-height:100vh}
+.app{width:100%;max-width:430px;min-height:100vh;background:linear-gradient(180deg,#211219,#101014 50%);padding:16px}
+header{text-align:center;padding:18px 0}
+.logo{width:74px;height:74px;margin:0 auto 10px;background:linear-gradient(135deg,#ff3158,#ff8fab);border-radius:22px;display:grid;place-items:center;font-weight:900;font-size:30px}
+h1{font-size:24px}.sub{color:#c2aab3;font-size:13px;margin-top:4px}
+.card{background:#ffffff0f;border:1px solid #ffffff18;border-radius:18px;padding:14px;margin-top:14px}
+.row{display:flex;gap:8px;margin-top:10px}
+select,input{flex:1;padding:12px;border-radius:10px;border:1px solid #333;background:#222;color:#fff}
+button{border:0;border-radius:10px;padding:12px 14px;font-weight:700;color:#fff;background:#d52e59;cursor:pointer}
+#status{text-align:center;font-size:12px;color:#a89;margin-top:8px}
+#chat{height:360px;overflow-y:auto;background:#141417;border-radius:12px;padding:10px;margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.b{max-width:78%;padding:10px 12px;border-radius:16px;font-size:14px;line-height:1.4}
+.me{align-self:flex-end;background:#ff2d55;border-bottom-right-radius:4px}
+.you{align-self:flex-start;background:#2a2a2e;border-bottom-left-radius:4px}
+.input{display:flex;gap:8px;margin-top:10px}
+.input input{border-radius:24px}
+.input button{width:48px;height:48px;border-radius:50%}
+.callBox{display:flex;gap:8px;margin-top:10px}
+.callBox button{flex:1}
+.video{background:#6639b7}
+video{width:100%;border-radius:12px;background:#000;margin-top:12px;display:none}
+#local{position:fixed;right:12px;bottom:12px;width:110px;border-radius:12px;border:2px solid #ff2d55;z-index:99;display:none}
+</style>
 </head>
 <body>
-  <main class="app">
-    <header>
-      <div class="logo">SM</div>
-      <h1>SM ❤️</h1>
-      <div class="sub">Sohel & Mou — Just Us Two</div>
-    </header>
-
-    <section class="card">
-      <h3>💞 Our Little World</h3>
-      <div class="people">
-        <div class="person">
-          <div class="avatar">👨</div>
-          <div class="name">Sohel</div>
-          <div class="status">Your King 👑</div>
-        </div>
-        <div class="person">
-          <div class="avatar">👩</div>
-          <div class="name">Mou</div>
-          <div class="status">Your Queen 👑</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>📞 Stay Connected</h3>
-      <button class="call" onclick="demo('Audio call')">
-        🎙️ Audio Call
-      </button>
-      <button class="call video" onclick="demo('Video call')">
-        📹 Video Call
-      </button>
-      <p class="note">
-        Calls will be enabled after we connect a secure
-        calling service.
-      </p>
-    </section>
-
-    <section class="card">
-      <h3>💌 A Little Love Note</h3>
-      <p>Every day is special when I have you, Mou. ❤️</p>
-      <p class="note">Made with love, for Sohel & Mou.</p>
-    </section>
-
-    <footer>SM • Our Private Little World ❤️</footer>
-  </main>
-
-  <script>
-    function demo(type) {
-      alert(type + " is not connected yet. Coming soon! ❤️");
-    }
-  </script>
+<div class="app">
+<header><div class="logo">SM</div><h1>SM ❤️</h1><div class="sub">Sohel & Mou - Just Us Two</div></header>
+<div class="card">
+<select id="iam"><option value="Sohel">I am Sohel</option><option value="Mou">I am Mou</option></select>
+<div class="row"><input id="room" value="sohel-mou-143"><button onclick="start()">Connect</button></div>
+<div id="status">Same Room ID use koro dujon</div>
+<div id="chat"></div>
+<div class="input"><input id="msg" placeholder="Love message likho..." onkeydown="if(event.key==='Enter')send()"><button onclick="send()">➤</button></div>
+<div class="callBox"><button onclick="doCall(false)">🎙️ Audio</button><button class="video" onclick="doCall(true)">📹 Video</button></div>
+<video id="remote" autoplay playsinline></video>
+</div>
+</div>
+<video id="local" autoplay playsinline muted></video>
+<script>
+let peer,conn,myId,otherId,roomId;
+const chat=document.getElementById('chat');
+const statusEl=document.getElementById('status');
+function addMsg(t,mine){
+let d=document.createElement('div');d.className='b '+(mine?'me':'you');d.innerText=t;
+chat.appendChild(d);chat.scrollTop=chat.scrollHeight;
+let h=JSON.parse(localStorage.getItem('sm_chat')||'[]');h.push({t,mine});localStorage.setItem('sm_chat',JSON.stringify(h.slice(-200)));
+}
+(function load(){
+let h=JSON.parse(localStorage.getItem('sm_chat')||'[]');h.forEach(x=>{let d=document.createElement('div');d.className='b '+(x.mine?'me':'you');d.innerText=x.t;chat.appendChild(d);});
+})();
+function start(){
+let iam=document.getElementById('iam').value;
+roomId=document.getElementById('room').value.trim()||'sohel-mou-143';
+myId=roomId+'-'+iam.toLowerCase();
+otherId=roomId+'-'+(iam.toLowerCase()==='sohel'?'mou':'sohel');
+statusEl.innerText='Connecting as '+iam+'...';
+if(peer)try{peer.destroy()}catch{}
+peer=new Peer(myId);
+peer.on('open',()=>{statusEl.innerText='Online as '+myId+'. Connecting to '+otherId+'...'; setTimeout(tryConn,1200);});
+peer.on('connection',c=>{conn=c;setup();});
+peer.on('call',async call=>{
+try{
+let stream=await navigator.mediaDevices.getUserMedia({audio:true,video:call.metadata.v});
+call.answer(stream); call.on('stream',r=>showCall(r,stream,call.metadata.v));
+}catch{}
+});
+}
+function tryConn(){
+if(conn && conn.open) return;
+conn=peer.connect(otherId,{reliable:true});
+if(conn) setup(); else setTimeout(tryConn,2500);
+}
+function setup(){
+if(!conn) return;
+conn.on('open',()=>{statusEl.innerText='✅ Connected to '+otherId+' - Messenger Ready'; addMsg('Connected ❤️',true);});
+conn.on('data',d=>{addMsg(d,false);});
+conn.on('close',()=>{statusEl.innerText='Disconnected, retrying...'; setTimeout(tryConn,2000);});
+}
+function send(){
+let i=document.getElementById('msg');let t=i.value.trim();if(!t)return;
+let iam=document.getElementById('iam').value;
+let full=iam+': '+t;
+addMsg(full,true);
+if(conn && conn.open) conn.send(full);
+i.value='';
+}
+async function doCall(vid){
+try{
+let stream=await navigator.mediaDevices.getUserMedia({audio:true,video:vid});
+showCall(null,stream,vid);
+let call=peer.call(otherId,stream,{metadata:{v:vid}});
+call.on('stream',r=>showCall(r,stream,vid));
+}catch(e){alert('Mic/Camera permission dao');}
+}
+function showCall(rem,loc,vid){
+let rv=document.getElementById('remote');let lv=document.getElementById('local');
+if(loc){lv.srcObject=loc;lv.style.display=vid?'block':'none';}
+if(rem){rv.srcObject=rem;rv.style.display='block';}
+}
+</script>
 </body>
 </html>
