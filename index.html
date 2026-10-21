@@ -1,111 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SM - Sohel & Mou</title>
-<script src="https://unpkg.com/peerjs@1.5.3/dist/peerjs.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SM Private Chat V2</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
-body{background:#101014;color:#fff;display:flex;justify-content:center;min-height:100vh}
-.app{width:100%;max-width:430px;min-height:100vh;background:linear-gradient(180deg,#211219,#101014 50%);padding:16px}
-header{text-align:center;padding:18px 0}
-.logo{width:74px;height:74px;margin:0 auto 10px;background:linear-gradient(135deg,#ff3158,#ff8fab);border-radius:22px;display:grid;place-items:center;font-weight:900;font-size:30px}
-h1{font-size:24px}.sub{color:#c2aab3;font-size:13px;margin-top:4px}
-.card{background:#ffffff0f;border:1px solid #ffffff18;border-radius:18px;padding:14px;margin-top:14px}
-.row{display:flex;gap:8px;margin-top:10px}
-select,input{flex:1;padding:12px;border-radius:10px;border:1px solid #333;background:#222;color:#fff}
-button{border:0;border-radius:10px;padding:12px 14px;font-weight:700;color:#fff;background:#d52e59;cursor:pointer}
-#status{text-align:center;font-size:12px;color:#a89;margin-top:8px}
-#chat{height:360px;overflow-y:auto;background:#141417;border-radius:12px;padding:10px;margin-top:12px;display:flex;flex-direction:column;gap:8px}
-.b{max-width:78%;padding:10px 12px;border-radius:16px;font-size:14px;line-height:1.4}
-.me{align-self:flex-end;background:#ff2d55;border-bottom-right-radius:4px}
-.you{align-self:flex-start;background:#2a2a2e;border-bottom-left-radius:4px}
-.input{display:flex;gap:8px;margin-top:10px}
-.input input{border-radius:24px}
-.input button{width:48px;height:48px;border-radius:50%}
-.callBox{display:flex;gap:8px;margin-top:10px}
-.callBox button{flex:1}
-.video{background:#6639b7}
-video{width:100%;border-radius:12px;background:#000;margin-top:12px;display:none}
-#local{position:fixed;right:12px;bottom:12px;width:110px;border-radius:12px;border:2px solid #ff2d55;z-index:99;display:none}
+body{font-family:'Poppins',sans-serif}
+.msg-sohel{background:linear-gradient(135deg,#ff4d8d,#ff7eb3);color:#fff;border-radius:18px 18px 2px 18px}
+.msg-mou{background:#2a2a4a;color:#fff;border-radius:18px 18px 18px 2px}
 </style>
 </head>
-<body>
-<div class="app">
-<header><div class="logo">SM</div><h1>SM ❤️</h1><div class="sub">Sohel & Mou - Just Us Two</div></header>
-<div class="card">
-<select id="iam"><option value="Sohel">I am Sohel</option><option value="Mou">I am Mou</option></select>
-<div class="row"><input id="room" value="sohel-mou-143"><button onclick="start()">Connect</button></div>
-<div id="status">Same Room ID use koro dujon</div>
-<div id="chat"></div>
-<div class="input"><input id="msg" placeholder="Love message likho..." onkeydown="if(event.key==='Enter')send()"><button onclick="send()">➤</button></div>
-<div class="callBox"><button onclick="doCall(false)">🎙️ Audio</button><button class="video" onclick="doCall(true)">📹 Video</button></div>
-<video id="remote" autoplay playsinline></video>
+<body class="bg-[#0f0f1a] h-[100dvh] flex flex-col max-w-[480px] mx-auto">
+<header class="bg-[#1a1a2e] p-4 flex items-center justify-between border-b border-white/10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center font-bold text-white">SM</div>
+<div><h1 class="text-white font-semibold">Sohel ❤️ Mou</h1><p class="text-[11px] text-green-400">● Offline msg + Photo ON</p></div>
 </div>
+<button id="whoami" class="text-[11px] text-white/60 bg-white/10 px-3 py-1 rounded-full"></button>
+</header>
+<div id="nameBox" class="p-3 bg-[#1a1a2e] flex gap-2">
+<button onclick="setUser('Sohel')" class="flex-1 py-2.5 rounded-full bg-white text-black font-semibold">I am Sohel</button>
+<button onclick="setUser('Mou')" class="flex-1 py-2.5 rounded-full bg-pink-600 text-white font-semibold">I am Mou</button>
 </div>
-<video id="local" autoplay playsinline muted></video>
-<script>
-let peer,conn,myId,otherId,roomId;
-const chat=document.getElementById('chat');
-const statusEl=document.getElementById('status');
-function addMsg(t,mine){
-let d=document.createElement('div');d.className='b '+(mine?'me':'you');d.innerText=t;
-chat.appendChild(d);chat.scrollTop=chat.scrollHeight;
-let h=JSON.parse(localStorage.getItem('sm_chat')||'[]');h.push({t,mine});localStorage.setItem('sm_chat',JSON.stringify(h.slice(-200)));
-}
-(function load(){
-let h=JSON.parse(localStorage.getItem('sm_chat')||'[]');h.forEach(x=>{let d=document.createElement('div');d.className='b '+(x.mine?'me':'you');d.innerText=x.t;chat.appendChild(d);});
-})();
-function start(){
-let iam=document.getElementById('iam').value;
-roomId=document.getElementById('room').value.trim()||'sohel-mou-143';
-myId=roomId+'-'+iam.toLowerCase();
-otherId=roomId+'-'+(iam.toLowerCase()==='sohel'?'mou':'sohel');
-statusEl.innerText='Connecting as '+iam+'...';
-if(peer)try{peer.destroy()}catch{}
-peer=new Peer(myId);
-peer.on('open',()=>{statusEl.innerText='Online as '+myId+'. Connecting to '+otherId+'...'; setTimeout(tryConn,1200);});
-peer.on('connection',c=>{conn=c;setup();});
-peer.on('call',async call=>{
-try{
-let stream=await navigator.mediaDevices.getUserMedia({audio:true,video:call.metadata.v});
-call.answer(stream); call.on('stream',r=>showCall(r,stream,call.metadata.v));
-}catch{}
+<div id="messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#12121f]"></div>
+<div id="previewBox" class="hidden p-3 bg-black/60 flex items-center justify-between">
+<div class="flex items-center gap-2"><img id="previewImg" class="h-14 w-14 object-cover rounded-lg"><span class="text-white text-xs">Photo ready</span></div>
+<button onclick="cancelImg()" class="text-white bg-white/20 px-3 py-1 rounded-full text-xs">X</button>
+</div>
+<div class="p-3 bg-[#1a1a2e] flex items-end gap-2">
+<label class="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center cursor-pointer text-xl">📷<input type="file" id="imgInput" accept="image/*" hidden></label>
+<textarea id="msgInput" rows="1" placeholder="Moner kotha likho..." class="flex-1 bg-white/10 rounded-[20px] px-4 py-3 text-white text-[14px] outline-none resize-none"></textarea>
+<button id="sendBtn" class="w-11 h-11 bg-gradient-to-br from-pink-500 to-violet-600 rounded-full text-white text-[20px]">↑</button>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyD-2OqkcSev3XzcAt4-p2kGLkGYYqL8hzE",
+  authDomain: "sm-chat-da9f7.firebaseapp.com",
+  projectId: "sm-chat-da9f7",
+  storageBucket: "sm-chat-da9f7.firebasestorage.app",
+  messagingSenderId: "854162073261",
+  appId: "1:854162073261:web:95b663faf367b19d048824",
+  databaseURL: "https://sm-chat-da9f7-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const messagesRef = ref(db, "sm_v2_messages");
+let currentUser = localStorage.getItem('sm_user') || '';
+const whoami = document.getElementById('whoami');
+function updateWho(){ if(currentUser){ whoami.textContent = currentUser; document.getElementById('nameBox').style.display='none'; } else{ whoami.textContent = 'Select name'; document.getElementById('nameBox').style.display='flex'; } }
+updateWho();
+window.setUser = (name)=>{ currentUser = name; localStorage.setItem('sm_user', name); updateWho(); };
+const messagesEl = document.getElementById('messages');
+const msgInput = document.getElementById('msgInput');
+let pendingImage = null;
+onChildAdded(query(messagesRef, orderByChild('ts')), (snap)=>{
+  const d = snap.val(); if(!d) return;
+  const isMe = d.sender === currentUser;
+  const div = document.createElement('div'); div.className = `flex ${isMe?'justify-end':'justify-start'}`;
+  let inner=''; if(d.type==='image'){ inner = `<div class="${isMe?'msg-sohel':'msg-mou'} p-1.5 max-w-[75%]"><img src="${d.text}" class="rounded-xl max-w-[220px]"><div class="text-[10px] opacity-60 px-2 pt-1">${d.sender} • ${d.time}</div></div>`; }else{ inner = `<div class="${isMe?'msg-sohel':'msg-mou'} px-4 py-2.5 max-w-[78%] text-[14px]"><div class="whitespace-pre-wrap break-words">${d.text}</div><div class="text-[9px] opacity-60 mt-1 text-right">${d.sender} • ${d.time}</div></div>`; }
+  div.innerHTML = inner; messagesEl.appendChild(div); messagesEl.scrollTop = messagesEl.scrollHeight;
 });
-}
-function tryConn(){
-if(conn && conn.open) return;
-conn=peer.connect(otherId,{reliable:true});
-if(conn) setup(); else setTimeout(tryConn,2500);
-}
-function setup(){
-if(!conn) return;
-conn.on('open',()=>{statusEl.innerText='✅ Connected to '+otherId+' - Messenger Ready'; addMsg('Connected ❤️',true);});
-conn.on('data',d=>{addMsg(d,false);});
-conn.on('close',()=>{statusEl.innerText='Disconnected, retrying...'; setTimeout(tryConn,2000);});
-}
-function send(){
-let i=document.getElementById('msg');let t=i.value.trim();if(!t)return;
-let iam=document.getElementById('iam').value;
-let full=iam+': '+t;
-addMsg(full,true);
-if(conn && conn.open) conn.send(full);
-i.value='';
-}
-async function doCall(vid){
-try{
-let stream=await navigator.mediaDevices.getUserMedia({audio:true,video:vid});
-showCall(null,stream,vid);
-let call=peer.call(otherId,stream,{metadata:{v:vid}});
-call.on('stream',r=>showCall(r,stream,vid));
-}catch(e){alert('Mic/Camera permission dao');}
-}
-function showCall(rem,loc,vid){
-let rv=document.getElementById('remote');let lv=document.getElementById('local');
-if(loc){lv.srcObject=loc;lv.style.display=vid?'block':'none';}
-if(rem){rv.srcObject=rem;rv.style.display='block';}
-}
+async function send(){ if(!currentUser){ alert('Age Sohel / Mou select koro!'); return; } const txt = msgInput.value.trim(); if(!txt && !pendingImage) return; const payload = { sender: currentUser, text: pendingImage ? pendingImage : txt, type: pendingImage ? 'image' : 'text', time: new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), ts: Date.now() }; msgInput.value=''; pendingImage=null; document.getElementById('previewBox').classList.add('hidden'); await push(messagesRef, payload); }
+document.getElementById('sendBtn').onclick = send;
+msgInput.addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+document.getElementById('imgInput').onchange = (e)=>{ const file = e.target.files[0]; if(!file) return; if(file.size > 900*1024){ alert('900KB er kom photo dao!'); return; } const r = new FileReader(); r.onload = ()=>{ pendingImage = r.result; document.getElementById('previewImg').src = pendingImage; document.getElementById('previewBox').classList.remove('hidden'); }; r.readAsDataURL(file); };
+window.cancelImg = ()=>{ pendingImage=null; document.getElementById('previewBox').classList.add('hidden'); };
+whoami.onclick = ()=>{ localStorage.removeItem('sm_user'); currentUser=''; updateWho(); };
 </script>
 </body>
 </html>
