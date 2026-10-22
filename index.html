@@ -1,37 +1,32 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Sohel ❤️ Mou - Final</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sohel ❤️ Mou - Final No Sound + Swipe Reply</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
 body{font-family:sans-serif;background:#0f0f1a;overscroll-behavior:none}
-#messages{position:relative;background:rgba(18,18,31,0.85);min-height:60vh}
+#messages{position:relative;background:rgba(18,18,31,0.9);min-height:60vh}
 #messages::before{content:"";position:absolute;inset:0;background:url('bg.jpg') center/cover no-repeat;opacity:0.22;filter:blur(2px);z-index:-1}
 .msg-me{background:linear-gradient(135deg,#ff4d8d,#ff7eb3);border-radius:18px 18px 2px 18px}
 .msg-other{background:#2a2a4a;border-radius:18px 18px 18px 2px}
-.react-bar{position:absolute;bottom:-20px;right:6px;background:#1e1e32;border-radius:20px;padding:3px 6px;display:flex;gap:4px;font-size:11px;border:1px solid rgba(255,255,255,0.15)}
-#lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:none;align-items:center;justify-content:center}
-#lightbox img,#lightbox video{max-width:95%;max-height:90%;border-radius:12px}
-#localVideo{position:absolute;touch-action:none;cursor:grab;z-index:30;right:16px;bottom:120px;box-shadow:0 8px 20px rgba(0,0,0,0.6)}
+.msg-wrap{position:relative;transition:transform 0.2s ease;touch-action:pan-y}
+.msg-wrap.swiping{transition:none}
+.reply-preview{border-left:3px solid #ff4d8d;background:rgba(255,255,255,0.08);padding:6px 10px;border-radius:8px;margin-bottom:6px;font-size:12px}
+#localVideo{position:absolute;touch-action:none;cursor:grab;z-index:30;right:16px;bottom:120px}
 #localVideo.dragging{transform:scale(1.05);box-shadow:0 0 20px #ff4d8d}
 .call-btn{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.reply-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:0;transition:0.2s}
 </style>
 </head>
 <body class="h-[100dvh] flex flex-col max-w-[480px] mx-auto relative text-white">
-<audio id="ringTone" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3"></audio>
-<audio id="callTone" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3"></audio>
-<audio id="msgTone" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c7e8a2.mp3"></audio>
 <audio id="remoteAudio" autoplay playsinline></audio>
-
-<div id="lightbox" onclick="this.style.display='none'"><img id="lbImg" style="display:none"><video id="lbVideo" controls playsinline style="display:none"></video></div>
 
 <header class="bg-[#1a1a2e] p-3 flex items-center justify-between border-b border-white/10">
 <div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center font-bold text-sm">SM</div><div><h1 id="headerName" class="text-[15px] font-semibold">Select User</h1><p id="statusText" class="text-[11px] text-white/50">Select koro</p></div></div>
-<div class="flex gap-2"><button onclick="startCall(false)" class="w-9 h-9 bg-white/10 rounded-full">📞</button><button onclick="startCall(true)" class="w-9 h-9 bg-white/10 rounded-full">📹</button><button id="whoamiBtn" class="text-[10px] bg-white/10 px-2 py-1 rounded-full text-white/60"></button></div>
+<div class="flex gap-2"><button onclick="startCall(false)" class="w-9 h-9 bg-white/10 rounded-full">📞</button><button onclick="startCall(true)" class="w-9 h-9 bg-white/10 rounded-full">📹</button><button id="whoamiBtn" class="text-[10px] bg-white/10 px-2 py-1 rounded-full"></button></div>
 </header>
 
 <div id="nameBox" class="p-2 bg-[#1a1a2e] flex gap-2">
@@ -39,27 +34,26 @@ body{font-family:sans-serif;background:#0f0f1a;overscroll-behavior:none}
 <button onclick="setUser('Mou')" class="flex-1 py-3 rounded-full bg-pink-600 text-white font-bold">I am Mou</button>
 </div>
 
-<div id="messages" class="flex-1 overflow-y-auto p-4 space-y-6"></div>
+<div id="messages" class="flex-1 overflow-y-auto p-4 space-y-5"></div>
 
-<!-- CALL SCREEN -->
+<!-- CALL SCREEN - NO SOUND -->
 <div id="callScreen" class="hidden absolute inset-0 bg-[#0f141a] z-50 flex flex-col">
-<div id="callTopBar" class="flex items-center justify-between p-4"><button onclick="endCall()" class="w-10 h-10 bg-white/10 rounded-full">✕</button><div class="text-center"><p id="callName" class="font-bold">Mou</p><p id="callTimer" class="text-xs text-white/60">Calling...</p></div><button onclick="endCall()" class="w-10 h-10 bg-red-600 rounded-full">📞</button></div>
+<div class="flex items-center justify-between p-4"><button onclick="endCall()" class="w-10 h-10 bg-white/10 rounded-full">✕</button><div class="text-center"><p id="callName" class="font-bold">Mou</p><p id="callTimer" class="text-xs text-white/60">Calling...</p></div><button onclick="endCall()" class="w-10 h-10 bg-red-600 rounded-full">📞</button></div>
 <div id="callVideoArea" class="flex-1 flex flex-col items-center justify-center relative overflow-hidden">
-<img id="callAvatar" src="bg.jpg" class="w-32 h-32 rounded-full object-cover border-4 border-white/10"><p id="callStatusText" class="text-white/50 text-sm mt-3">Calling...</p>
+<img id="callAvatar" src="bg.jpg" class="w-32 h-32 rounded-full object-cover"><p id="callStatusText" class="text-white/50 text-sm mt-3">Calling...</p>
 <video id="remoteVideo" autoplay playsinline class="hidden absolute inset-0 w-full h-full object-cover"></video>
 <video id="localVideo" autoplay muted playsinline class="hidden w-28 h-40 bg-[#222] rounded-xl border border-white/20 object-cover"></video>
-<p id="tapHint" class="hidden absolute bottom-28 text-white/40 text-[11px]">Tap to show controls • Drag my video to move</p>
 </div>
-<div id="videoControls" class="bg-[#1a212b] rounded-t-[28px] p-5">
-<div class="grid grid-cols-3 gap-4">
+<div id="videoControls" class="bg-[#1a212b] rounded-t-[28px] p-5"><div class="grid grid-cols-3 gap-4">
 <button id="speakerBtn" class="flex flex-col items-center gap-1"><div class="call-btn bg-white/10">🔈</div><span class="text-[10px]">Earpiece</span></button>
 <button id="muteBtn" class="flex flex-col items-center gap-1"><div class="call-btn bg-white/10">🎤</div><span class="text-[10px]">Mute</span></button>
 <button onclick="endCall()" class="flex flex-col items-center gap-1"><div class="call-btn bg-red-600">📞</div><span class="text-[10px]">End</span></button>
-</div>
-</div>
+</div></div>
 </div>
 
-<div id="incomingBox" class="hidden absolute top-20 left-4 right-4 bg-[#1e1e32] border border-pink-500/50 p-4 rounded-2xl z-40 flex justify-between items-center"><p id="incomingText" class="text-sm font-bold">Calling...</p><div class="flex gap-3"><button onclick="declineCall()" class="w-12 h-12 bg-red-600 rounded-full">❌</button><button onclick="acceptCall()" class="w-12 h-12 bg-green-500 rounded-full">✅</button></div></div>
+<div id="incomingBox" class="hidden absolute top-20 left-4 right-4 bg-[#1e1e32] border border-pink-500/50 p-4 rounded-2xl z-40 flex justify-between items-center shadow-2xl"><div><p id="incomingText" class="text-sm font-bold">Mou calling...</p><p class="text-[11px] text-white/50">Tap to answer</p></div><div class="flex gap-3"><button onclick="declineCall()" class="w-12 h-12 bg-red-600 rounded-full">❌</button><button onclick="acceptCall()" class="w-12 h-12 bg-green-500 rounded-full">✅</button></div></div>
+
+<div id="replyBox" class="hidden p-2.5 bg-[#1a1a2e] border-t border-pink-500/30 flex justify-between items-center"><div class="flex-1"><p class="text-[11px] text-pink-400 font-bold">Replying to <span id="replyToName"></span></p><p id="replyToText" class="text-[12px] text-white/70 truncate max-w-[280px]"></p></div><button onclick="cancelReply()" class="w-7 h-7 bg-white/10 rounded-full text-xs">✕</button></div>
 <div id="previewBox" class="hidden p-2 bg-[#1a1a2e] border-t flex justify-between items-center text-xs"><span id="previewText"></span><button onclick="cancelPreview()" class="px-3 py-1 bg-red-600 rounded-full">X</button></div>
 
 <div class="bg-[#1a1a2e] p-2.5 flex items-end gap-2 border-t border-white/10">
@@ -70,26 +64,12 @@ body{font-family:sans-serif;background:#0f0f1a;overscroll-behavior:none}
 </div>
 
 <script>
-// FIREBASE - COMPAT VERSION (MOBILE 100% WORKING)
 var firebaseConfig={apiKey:"AIzaSyD-2OqkcSev3XzcAt4-p2kGLkGYYqL8hzE",authDomain:"sm-chat-da9f7.firebaseapp.com",projectId:"sm-chat-da9f7",databaseURL:"https://sm-chat-da9f7-default-rtdb.asia-southeast1.firebasedatabase.app"};
 firebase.initializeApp(firebaseConfig);
 var db=firebase.database();
 var messagesRef=db.ref("smMessenger/messages/SM_ROOM");
 var callRef=db.ref("sm_calls/current");
-
-var currentUser='',otherUser='',pc,localStream,timerInt,pendingImage=null,pendingVideo=null,pendingFile=null,pendingAudio=null,speakerOn=false,incomingData=null,controlsHideTimer=null;
-
-// *** RINGTONE 100% OFF FIX ***
-function stopSound(){
-  try{
-    var r=document.getElementById('ringTone');
-    var c=document.getElementById('callTone');
-    r.pause(); r.currentTime=0; r.loop=false;
-    c.pause(); c.currentTime=0; c.loop=false;
-    r.muted=true; c.muted=true;
-    setTimeout(function(){ r.muted=false; r.loop=true; c.muted=false; c.loop=true; },1200);
-  }catch(e){}
-}
+var currentUser='',otherUser='',pc,localStream,timerInt,pendingImage=null,pendingVideo=null,pendingFile=null,pendingAudio=null,speakerOn=false,incomingData=null,replyData=null;
 
 function setUser(n){
   currentUser=n; otherUser=n==='Sohel'?'Mou':'Sohel';
@@ -100,74 +80,101 @@ function setUser(n){
   document.getElementById('whoamiBtn').innerText=n;
   document.getElementById('nameBox').style.display='none';
   db.ref('smMessenger/presence/'+n).set({online:true,lastSeen:firebase.database.ServerValue.TIMESTAMP});
-  db.ref('smMessenger/presence/'+n).onDisconnect().update({online:false,lastSeen:firebase.database.ServerValue.TIMESTAMP});
   loadMessages();
 }
 var cu=localStorage.getItem('sm_user'); if(cu){ setTimeout(function(){ setUser(cu); },500); }
 
 function loadMessages(){
   messagesRef.on('value',function(snap){
-    if(!currentUser){document.getElementById('messages').innerHTML='<div class="text-center text-white/30 text-xs mt-20">Select Sohel or Mou to start</div>'; return;}
+    if(!currentUser){document.getElementById('messages').innerHTML='<div class="text-center text-white/30 text-xs mt-20">Select Sohel or Mou</div>'; return;}
     var el=document.getElementById('messages'); el.innerHTML='';
     snap.forEach(function(child){
       var d=child.val(); if(!d) return;
       var isMe=d.sender===currentUser;
-      var div=document.createElement('div'); div.className='flex '+(isMe?'justify-end':'justify-start');
+      var wrap=document.createElement('div'); wrap.className='msg-wrap flex '+(isMe?'justify-end':'justify-start')+' relative';
+      wrap.dataset.key=child.key; wrap.dataset.text=(d.text||d.fileName||d.type||'').substring(0,50); wrap.dataset.sender=d.sender;
+      
+      var replyHtml='';
+      if(d.replyTo){
+        replyHtml='<div class="reply-preview"><p class="text-pink-300 font-bold text-[10px]">'+d.replyTo.sender+'</p><p class="truncate">'+(d.replyTo.text||'').substring(0,60)+'</p></div>';
+      }
+      
       var c='';
       if(d.deleted) c='<div class="italic opacity-60 text-[13px]">🚫 Unsent</div>';
-      else if(d.type==='image') c='<img src="'+d.data+'" onclick="openLb(\''+d.data+'\',\'image\')" class="rounded-xl max-w-[230px]">';
-      else if(d.type==='video') c='<video src="'+d.data+'" onclick="openLb(\''+d.data+'\',\'video\')" class="rounded-xl max-w-[230px] bg-black"></video>';
+      else if(d.type==='image') c='<img src="'+d.data+'" class="rounded-xl max-w-[230px]">';
+      else if(d.type==='video') c='<video src="'+d.data+'" class="rounded-xl max-w-[230px] bg-black"></video>';
       else if(d.type==='file') c='<a href="'+d.data+'" download="'+d.fileName+'" class="underline">📎 '+d.fileName+'</a>';
       else if(d.type==='audio') c='<audio controls src="'+d.data+'" class="w-[200px]"></audio>';
       else c='<div class="whitespace-pre-wrap break-words">'+(d.text||'')+'</div>';
-      var react=d.reacts?'<div class="react-bar">'+Object.values(d.reacts).join('')+'</div>':'';
-      div.innerHTML='<div class="'+(isMe?'msg-me':'msg-other')+' px-4 py-2.5 max-w-[78%] text-white text-[14px] relative">'+c+react+'<div class="text-[9px] opacity-60 mt-1">'+(d.time||'')+'</div></div>';
-      div.oncontextmenu=function(e){e.preventDefault(); if(confirm('React ❤️ ? OK=Love, Cancel=Delete')){db.ref('smMessenger/messages/SM_ROOM/'+child.key+'/reacts/'+currentUser).set('❤️');}else{ if(isMe) db.ref('smMessenger/messages/SM_ROOM/'+child.key).update({deleted:true}); }};
-      el.appendChild(div);
-      if(d.sender!==currentUser && !d.readByOther && !d.deleted){ db.ref('smMessenger/messages/SM_ROOM/'+child.key).update({readByOther:true}); try{document.getElementById('msgTone').play();}catch(e){} }
+      
+      wrap.innerHTML='<div class="reply-icon">↩️</div><div class="'+(isMe?'msg-me':'msg-other')+' px-4 py-2.5 max-w-[78%] text-white text-[14px] relative">'+replyHtml+c+'<div class="text-[9px] opacity-60 mt-1">'+(d.time||'')+'</div></div>';
+      el.appendChild(wrap);
+      
+      // SWIPE TO REPLY LOGIC
+      var startX=0, currentX=0, isSwiping=false;
+      wrap.addEventListener('touchstart',function(e){ startX=e.touches[0].clientX; isSwiping=true; wrap.classList.add('swiping'); }, {passive:true});
+      wrap.addEventListener('touchmove',function(e){
+        if(!isSwiping) return; currentX=e.touches[0].clientX-startX;
+        if(currentX>0 && currentX<120){ wrap.style.transform='translateX('+currentX+'px)'; wrap.querySelector('.reply-icon').style.opacity=currentX/60; }
+      }, {passive:true});
+      wrap.addEventListener('touchend',function(e){
+        wrap.classList.remove('swiping'); wrap.style.transform='translateX(0)'; wrap.querySelector('.reply-icon').style.opacity=0;
+        if(currentX>60){ setReply(child.key, d.sender, d.text||d.fileName||d.type); }
+        isSwiping=false; currentX=0;
+      });
+      
+      // Click to set reply (desktop)
+      wrap.addEventListener('click',function(e){ if(e.target.tagName!=='IMG' && e.target.tagName!=='VIDEO' && e.target.tagName!=='AUDIO'){} });
+      wrap.addEventListener('dblclick',function(){ setReply(child.key, d.sender, d.text||d.fileName||d.type); });
     });
     el.scrollTop=el.scrollHeight;
   });
 }
 
-function openLb(src,type){
-  var lb=document.getElementById('lightbox'); var i=document.getElementById('lbImg'); var v=document.getElementById('lbVideo');
-  lb.style.display='flex'; if(type==='video'){v.src=src; v.style.display='block'; i.style.display='none'; v.play();}else{i.src=src; i.style.display='block'; v.style.display='none';}
+function setReply(key,sender,text){
+  replyData={key:key,sender:sender,text:text};
+  document.getElementById('replyToName').innerText=sender;
+  document.getElementById('replyToText').innerText=text.substring(0,60);
+  document.getElementById('replyBox').classList.remove('hidden');
+  document.getElementById('msgInput').focus();
+  // Haptic
+  if(navigator.vibrate) navigator.vibrate(50);
 }
+function cancelReply(){ replyData=null; document.getElementById('replyBox').classList.add('hidden'); }
 
 function sendMessage(){
   var text=document.getElementById('msgInput').value.trim();
   if(!text && !pendingImage && !pendingVideo && !pendingFile && !pendingAudio) return;
-  if(!currentUser){alert('Age I am Sohel / Mou select koro'); return;}
+  if(!currentUser){alert('Age select koro'); return;}
   var obj={sender:currentUser,text:text,time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),createdAt:firebase.database.ServerValue.TIMESTAMP,readByOther:false,type:'text'};
+  if(replyData){ obj.replyTo={sender:replyData.sender,text:replyData.text,key:replyData.key}; }
   if(pendingImage){obj.data=pendingImage; obj.type='image'; obj.text='';}
   if(pendingVideo){obj.data=pendingVideo; obj.type='video'; obj.text='';}
   if(pendingFile){obj.data=pendingFile.data; obj.fileName=pendingFile.name; obj.type='file'; obj.text='';}
   if(pendingAudio){obj.data=pendingAudio; obj.type='audio'; obj.text='';}
-  document.getElementById('msgInput').value=''; cancelPreview();
+  document.getElementById('msgInput').value=''; cancelPreview(); cancelReply();
   messagesRef.push(obj);
 }
 function cancelPreview(){pendingImage=null;pendingVideo=null;pendingFile=null;pendingAudio=null;document.getElementById('previewBox').classList.add('hidden');}
-function fileToDataURL(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result);};r.readAsDataURL(f);});}
-document.getElementById('imgInput').addEventListener('change',async function(e){var f=e.target.files[0];if(!f) return;var data=await fileToDataURL(f);if(f.type.startsWith('image/')){var img=new Image(); img.src=data; await new Promise(function(r){img.onload=r;}); var canvas=document.createElement('canvas'); var w=img.width,h=img.height; var max=800; if(w>max||h>max){if(w>h){h*=max/w;w=max;}else{w*=max/h;h=max;}} canvas.width=w; canvas.height=h; canvas.getContext('2d').drawImage(img,0,0,w,h); data=canvas.toDataURL('image/jpeg',0.6); pendingImage=data;}else{pendingVideo=data;} document.getElementById('previewText').innerText='Ready'; document.getElementById('previewBox').classList.remove('hidden'); e.target.value='';});
-document.getElementById('fileInput').addEventListener('change',async function(e){var f=e.target.files[0];if(!f) return;var data=await fileToDataURL(f);pendingFile={data:data,name:f.name}; document.getElementById('previewText').innerText=f.name; document.getElementById('previewBox').classList.remove('hidden'); e.target.value='';});
+function fileToDataURL(f){return new Promise(function(res){var r=new FileReader();r.onload=function(){res(r.result);};r.readAsDataURL(f);});}
+document.getElementById('imgInput').addEventListener('change',async function(e){var f=e.target.files[0];if(!f) return;var data=await fileToDataURL(f);if(f.type.startsWith('image/')){var img=new Image(); img.src=data; await new Promise(function(r){img.onload=r;}); var c=document.createElement('canvas'); var w=img.width,h=img.height; var max=800; if(w>max||h>max){if(w>h){h*=max/w;w=max;}else{w*=max/h;h=max;}} c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);data=c.toDataURL('image/jpeg',0.6);pendingImage=data;}else{pendingVideo=data;}document.getElementById('previewText').innerText='Ready';document.getElementById('previewBox').classList.remove('hidden');e.target.value='';});
+document.getElementById('fileInput').addEventListener('change',async function(e){var f=e.target.files[0];if(!f) return;var data=await fileToDataURL(f);pendingFile={data:data,[STRIPPED] document.getElementById('previewText').innerText=f.name; document.getElementById('previewBox').classList.remove('hidden'); e.target.value='';});
 var mr,ac=[];document.getElementById('micBtn').addEventListener('click',async function(){var b=this; if(mr&&mr.state==='recording'){mr.stop(); b.innerText='🎙️'; return;} try{var s=await navigator.mediaDevices.getUserMedia({audio:true}); mr=new MediaRecorder(s); ac=[]; mr.ondataavailable=function(e){ac.push(e.data);}; mr.onstop=function(){var bl=new Blob(ac,{type:'audio/webm'}); var r=new FileReader(); r.onload=function(){pendingAudio=r.result; document.getElementById('previewText').innerText='Voice ready'; document.getElementById('previewBox').classList.remove('hidden');}; r.readAsDataURL(bl); s.getTracks().forEach(function(t){t.stop();});}; mr.start(); b.innerText='⏹️';}catch(e){alert('Mic allow');}});
 document.getElementById('msgInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
 document.getElementById('whoamiBtn').addEventListener('click',function(){localStorage.removeItem('sm_user');location.reload();});
 
-// CALL - FIXED RINGTONE OFF + EARPIECE + DRAGGABLE
-function createPC(){pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}); pc.onicecandidate=function(e){if(e.candidate) db.ref('sm_calls/candidates/'+currentUser).push(e.candidate.toJSON());}; pc.ontrack=function(e){var rv=document.getElementById('remoteVideo'); var ra=document.getElementById('remoteAudio'); if(e.track.kind==='video'){rv.srcObject=e.streams[0]; rv.classList.remove('hidden'); rv.play(); document.getElementById('callAvatar').classList.add('hidden'); document.getElementById('callStatusText').classList.add('hidden'); showCtr();} if(e.track.kind==='audio'){ra.srcObject=e.streams[0]; ra.play(); setSpeaker(false);}}; return pc;}
+// CALL - NO SOUND AT ALL
+function createPC(){pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}); pc.onicecandidate=function(e){if(e.candidate) db.ref('sm_calls/candidates/'+currentUser).push(e.candidate.toJSON());}; pc.ontrack=function(e){var rv=document.getElementById('remoteVideo'); var ra=document.getElementById('remoteAudio'); if(e.track.kind==='video'){rv.srcObject=e.streams[0]; rv.classList.remove('hidden'); rv.play(); document.getElementById('callAvatar').classList.add('hidden');} if(e.track.kind==='audio'){ra.srcObject=e.streams[0]; ra.play(); setSpeaker(false);}}; return pc;}
 function listenCan(other){db.ref('sm_calls/candidates/'+other).on('value',function(snap){snap.forEach(function(child){var c=child.val(); if(c&&pc) pc.addIceCandidate(new RTCIceCandidate(c)).catch(function(){});});});}
-function showCtr(){document.getElementById('videoControls').classList.remove('hidden'); document.getElementById('callTopBar').classList.remove('hidden'); document.getElementById('tapHint').classList.add('hidden'); if(controlsHideTimer) clearTimeout(controlsHideTimer); if(!document.getElementById('remoteVideo').classList.contains('hidden')){controlsHideTimer=setTimeout(function(){document.getElementById('videoControls').classList.add('hidden'); document.getElementById('callTopBar').classList.add('hidden'); document.getElementById('tapHint').classList.remove('hidden');},4000);}}
 function startTimer(){var s=0; timerInt=setInterval(function(){s++; var m=String(Math.floor(s/60)).padStart(2,'0'); var sec=String(s%60).padStart(2,'0'); document.getElementById('callTimer').innerText=m+':'+sec;},1000);}
-function setSpeaker(on){speakerOn=on; var ra=document.getElementById('remoteAudio'); ra.volume=on?1.0:0.28; var btn=document.getElementById('speakerBtn'); btn.querySelector('div').innerText=on?'🔊':'🔈'; btn.querySelector('span').innerText=on?'Speaker ON':'Earpiece'; btn.querySelector('div').style.background=on?'#2a7cff':'rgba(255,255,255,0.1)';}
-async function startCall(v){if(!currentUser){alert('Age select koro Sohel/Mou'); return;} otherUser=currentUser==='Sohel'?'Mou':'Sohel'; document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callName').innerText=otherUser; document.getElementById('callTimer').innerText='Calling...'; showCtr(); document.getElementById('callTone').play().catch(function(){}); try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:!!v});}catch(e){alert('Camera allow'); return;} document.getElementById('localVideo').srcObject=localStream; document.getElementById('localVideo').classList.remove('hidden'); setSpeaker(false); var p1=createPC(); localStream.getTracks().forEach(function(t){p1.addTrack(t,localStream);}); var off=await p1.createOffer(); await p1.setLocalDescription(off); await callRef.set({offer:{type:off.type,sdp:off.sdp},caller:currentUser,callee:otherUser,type:v?'video':'voice',state:'calling'}); listenCan(otherUser);}
-async function acceptCall(){var d=incomingData; if(!d) return; stopSound(); document.getElementById('incomingBox').classList.add('hidden'); document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callName').innerText=d.caller; showCtr(); try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:d.type==='video'});}catch(e){return;} document.getElementById('localVideo').srcObject=localStream; if(d.type==='video') document.getElementById('localVideo').classList.remove('hidden'); setSpeaker(false); var p2=createPC(); localStream.getTracks().forEach(function(t){p2.addTrack(t,localStream);}); await p2.setRemoteDescription(new RTCSessionDescription(d.offer)); var ans=await p2.createAnswer(); await p2.setLocalDescription(ans); await db.ref('sm_calls/current/answer').set({type:ans.type,sdp:ans.sdp}); await db.ref('sm_calls/current/state').set('connected'); listenCan(d.caller); startTimer();}
-function endCall(){stopSound(); db.ref('sm_calls/candidates/'+currentUser).remove(); db.ref('sm_calls/candidates/'+otherUser).remove(); if(pc)pc.close(); pc=null; if(localStream)localStream.getTracks().forEach(function(t){t.stop();}); clearInterval(timerInt); if(controlsHideTimer) clearTimeout(controlsHideTimer); document.getElementById('callScreen').classList.add('hidden'); document.getElementById('remoteVideo').srcObject=null; document.getElementById('remoteVideo').classList.add('hidden'); document.getElementById('remoteAudio').srcObject=null; document.getElementById('callAvatar').classList.remove('hidden'); document.getElementById('callStatusText').classList.remove('hidden'); document.getElementById('videoControls').classList.remove('hidden'); document.getElementById('callTopBar').classList.remove('hidden'); callRef.remove();}
-function declineCall(){stopSound(); callRef.remove(); document.getElementById('incomingBox').classList.add('hidden');}
-callRef.on('value',async function(s){var d=s.val(); if(!d||!currentUser) return; if(d.state==='calling'&&d.callee===currentUser){incomingData=d; document.getElementById('incomingText').innerText=d.caller+' calling...'; document.getElementById('incomingBox').classList.remove('hidden'); document.getElementById('ringTone').play().catch(function(){});} if(d.answer&&d.caller===currentUser&&pc){stopSound(); try{await pc.setRemoteDescription(new RTCSessionDescription(d.answer));}catch(e){} startTimer(); showCtr();} if(!d){stopSound();}});
+function setSpeaker(on){speakerOn=on; var ra=document.getElementById('remoteAudio'); ra.volume=on?1.0:0.3; var btn=document.getElementById('speakerBtn'); btn.querySelector('div').innerText=on?'🔊':'🔈'; btn.querySelector('span').innerText=on?'Speaker ON':'Earpiece';}
+async function startCall(v){if(!currentUser){alert('Age select koro'); return;} otherUser=currentUser==='Sohel'?'Mou':'Sohel'; document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callName').innerText=otherUser; document.getElementById('callTimer').innerText='Calling...'; try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:!!v});}catch(e){alert('Camera allow'); return;} document.getElementById('localVideo').srcObject=localStream; document.getElementById('localVideo').classList.remove('hidden'); setSpeaker(false); var p1=createPC(); localStream.getTracks().forEach(function(t){p1.addTrack(t,localStream);}); var off=await p1.createOffer(); await p1.setLocalDescription(off); await callRef.set({offer:{type:off.type,sdp:off.sdp},caller:currentUser,callee:otherUser,type:v?'video':'voice',state:'calling'}); listenCan(otherUser);}
+async function acceptCall(){var d=incomingData; if(!d) return; document.getElementById('incomingBox').classList.add('hidden'); document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callName').innerText=d.caller; try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:d.type==='video'});}catch(e){return;} document.getElementById('localVideo').srcObject=localStream; if(d.type==='video') document.getElementById('localVideo').classList.remove('hidden'); setSpeaker(false); var p2=createPC(); localStream.getTracks().forEach(function(t){p2.addTrack(t,localStream);}); await p2.setRemoteDescription(new RTCSessionDescription(d.offer)); var ans=await p2.createAnswer(); await p2.setLocalDescription(ans); await db.ref('sm_calls/current/answer').set({type:ans.type,sdp:ans.sdp}); await db.ref('sm_calls/current/state').set('connected'); listenCan(d.caller); startTimer();}
+function endCall(){db.ref('sm_calls/candidates/'+currentUser).remove(); db.ref('sm_calls/candidates/'+otherUser).remove(); if(pc)pc.close(); pc=null; if(localStream)localStream.getTracks().forEach(function(t){t.stop();}); clearInterval(timerInt); document.getElementById('callScreen').classList.add('hidden'); document.getElementById('remoteVideo').srcObject=null; document.getElementById('remoteVideo').classList.add('hidden'); document.getElementById('remoteAudio').srcObject=null; document.getElementById('callAvatar').classList.remove('hidden'); callRef.remove();}
+function declineCall(){callRef.remove(); document.getElementById('incomingBox').classList.add('hidden');}
+callRef.on('value',async function(s){var d=s.val(); if(!d||!currentUser) return; if(d.state==='calling'&&d.callee===currentUser){incomingData=d; document.getElementById('incomingText').innerText=d.caller+' calling...'; document.getElementById('incomingBox').classList.remove('hidden');} if(d.answer&&d.caller===currentUser&&pc){try{await pc.setRemoteDescription(new RTCSessionDescription(d.answer));}catch(e){} startTimer();}});
 
-// DRAGGABLE SMALL VIDEO + TAP TO SHOW CONTROLS
+// DRAG SMALL VIDEO
 var localVideo=document.getElementById('localVideo'), callVideoArea=document.getElementById('callVideoArea'), isDragging=false, startX, startY, initLeft, initTop;
 function getPos(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};}
 function startDrag(e){if(localVideo.classList.contains('hidden')) return; isDragging=true; localVideo.classList.add('dragging'); var p=getPos(e); var r=localVideo.getBoundingClientRect(); var pr=callVideoArea.getBoundingClientRect(); startX=p.x; startY=p.y; initLeft=r.left-pr.left; initTop=r.top-pr.top; e.preventDefault();}
@@ -176,7 +183,6 @@ function endDrag(){isDragging=false; localVideo.classList.remove('dragging');}
 localVideo.addEventListener('mousedown',startDrag); localVideo.addEventListener('touchstart',startDrag,{passive:false});
 window.addEventListener('mousemove',onDrag); window.addEventListener('touchmove',onDrag,{passive:false});
 window.addEventListener('mouseup',endDrag); window.addEventListener('touchend',endDrag);
-document.getElementById('callVideoArea').addEventListener('click',function(e){ if(e.target===localVideo) return; if(!isDragging) showCtr(); });
 document.getElementById('speakerBtn').addEventListener('click',function(){setSpeaker(!speakerOn);});
 document.getElementById('muteBtn').addEventListener('click',function(){if(localStream)localStream.getAudioTracks().forEach(function(t){t.enabled=!t.enabled;});});
 </script>
