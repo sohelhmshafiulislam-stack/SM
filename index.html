@@ -2,46 +2,42 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sohel ❤️ Mou - Full Call & Chat</title>
+<title>Sohel ❤️ Mou Messenger</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>body{font-family:sans-serif}.msg-me{background:linear-gradient(135deg,#ff4d8d,#ff7eb3);color:#fff;border-radius:18px 18px 2px 18px}.msg-other{background:#2a2a4a;color:#fff;border-radius:18px 18px 18px 2px}#videos video{width:100%;height:100%;object-fit:cover}</style>
+<style>body{font-family:sans-serif}.msg-me{background:linear-gradient(135deg,#ff4d8d,#ff7eb3);border-radius:18px 18px 2px 18px}.msg-other{background:#2a2a4a;border-radius:18px 18px 18px 2px}</style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, onValue, set, remove, query, orderByChild, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, onValue, set, remove, update, onDisconnect, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const firebaseConfig = {
   apiKey: "AIzaSyD-2OqkcSev3XzcAt4-p2kGLkGYYqL8hzE",
   authDomain: "sm-chat-da9f7.firebaseapp.com",
   projectId: "sm-chat-da9f7",
-  storageBucket: "sm-chat-da9f7.firebasestorage.app",
-  messagingSenderId: "854162073261",
-  appId: "1:854162073261:web:95b663faf367b19d048824",
   databaseURL: "https://sm-chat-da9f7-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-window.db=db; window.fb={ref,push,onChildAdded,onValue,set,remove,query,orderByChild,onChildRemoved};
+window.db=db; window.fb={ref,push,onChildAdded,onValue,set,remove,update,onDisconnect,query,orderByChild};
 </script>
 </head>
 <body class="bg-[#0f0f1a] h-[100dvh] flex flex-col max-w-[480px] mx-auto relative">
 <audio id="ringTone" loop src="https://actions.google.com/sounds/v1/alarms/phone_ringing.ogg"></audio>
+<audio id="callTone" loop src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
-<!-- LOCK -->
 <div id="lockScreen" class="fixed inset-0 bg-[#0a0a14] z-[999] flex flex-col items-center justify-center p-6">
   <div class="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center text-3xl">🔒</div>
   <h2 class="font-bold text-xl mt-4 text-white">Sohel ❤️ Mou</h2>
   <input id="passInput" type="password" placeholder="76435668" class="mt-6 w-full max-w-[300px] bg-[#1e1e32] border border-white/20 rounded-full px-6 py-3 text-center outline-none text-white">
   <button onclick="checkPass()" class="mt-3 w-full max-w-[300px] bg-gradient-to-br from-pink-500 to-violet-600 font-bold py-3 rounded-full text-white">Unlock</button>
-  <button id="fingerBtn" onclick="unlockFinger()" class="hidden mt-3 w-full max-w-[300px] bg-[#1e1e32] border border-white/20 py-3 rounded-full text-sm text-white">👆 Fingerprint Unlock</button>
 </div>
 
-<header class="bg-[#1a1a2e] p-3 flex items-center justify-between border-b border-white/10 z-10">
+<header class="bg-[#1a1a2e] p-3 flex items-center justify-between border-b border-white/10">
 <div class="flex items-center gap-2">
 <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center font-bold text-white text-sm">SM</div>
-<div><h1 class="text-white text-sm font-semibold">Sohel ❤️ Mou</h1><p id="statusText" class="text-[10px] text-green-400">● Online</p></div>
+<div><h1 class="text-white text-sm font-semibold" id="headerName">Select User</h1><p id="statusText" class="text-[10px] text-white/50">● offline</p></div>
 </div>
 <div class="flex gap-2">
-<button id="voiceBtn" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center">📞</button>
-<button id="videoBtn" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center">📹</button>
+<button id="voiceBtn" class="w-9 h-9 bg-white/10 rounded-full">📞</button>
+<button id="videoBtn" class="w-9 h-9 bg-white/10 rounded-full">📹</button>
 <button id="whoami" class="text-[10px] text-white/60 bg-white/10 px-2 py-1 rounded-full"></button>
 </div>
 </header>
@@ -55,10 +51,10 @@ window.db=db; window.fb={ref,push,onChildAdded,onValue,set,remove,query,orderByC
 
 <!-- CALL SCREEN -->
 <div id="callScreen" class="hidden absolute inset-0 bg-[#0f0f1a] z-50 flex flex-col">
-<div class="flex-1 relative bg-black" id="videos">
-<video id="remoteVideo" autoplay playsinline class="absolute inset-0 w-full h-full"></video>
-<video id="localVideo" autoplay muted playsinline class="absolute bottom-24 right-4 w-28 h-40 bg-[#222] rounded-xl border border-white/20"></video>
-<div id="callInfo" class="absolute top-20 left-0 right-0 text-center">
+<div class="flex-1 relative bg-black">
+<video id="remoteVideo" autoplay playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+<video id="localVideo" autoplay muted playsinline class="absolute bottom-24 right-4 w-28 h-40 bg-[#222] rounded-xl border"></video>
+<div class="absolute top-20 left-0 right-0 text-center">
 <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center text-2xl">❤️</div>
 <p id="callName" class="text-white mt-4 font-semibold">Calling...</p>
 <p id="callTimer" class="text-white/60 text-sm">00:00</p>
@@ -68,122 +64,175 @@ window.db=db; window.fb={ref,push,onChildAdded,onValue,set,remove,query,orderByC
 <button id="muteBtn" class="w-14 h-14 bg-white/10 rounded-full">🎤</button>
 <button id="speakerBtn" class="w-14 h-14 bg-white/10 rounded-full">🔊</button>
 <button id="holdBtn" class="w-14 h-14 bg-white/10 rounded-full">⏸️</button>
-<button id="endBtn" class="w-14 h-14 bg-red-600 rounded-full text-white">📞</button>
-<button id="switchCamBtn" class="w-14 h-14 bg-white/10 rounded-full">🔄</button>
+<button id="endBtn" class="w-14 h-14 bg-red-600 rounded-full">📞</button>
 </div>
 </div>
 
-<!-- INCOMING -->
 <div id="incomingBox" class="hidden absolute top-16 left-4 right-4 bg-[#1a1a2e] border border-pink-500/50 p-4 rounded-2xl z-40 flex items-center justify-between">
-<div><p class="text-white text-sm font-bold" id="incomingText">Mou is calling...</p><p class="text-white/50 text-xs">Incoming call</p></div>
-<div class="flex gap-2">
-<button id="declineBtn" class="w-10 h-10 bg-red-600 rounded-full">❌</button>
-<button id="acceptBtn" class="w-10 h-10 bg-green-600 rounded-full">✅</button>
-</div>
+<div><p class="text-white text-sm font-bold" id="incomingText">Calling...</p><p class="text-white/50 text-xs">WhatsApp style call</p></div>
+<div class="flex gap-3"><button id="declineBtn" class="w-12 h-12 bg-red-600 rounded-full">❌</button><button id="acceptBtn" class="w-12 h-12 bg-green-600 rounded-full">✅</button></div>
 </div>
 
-<!-- PREVIEW -->
-<div id="previewBox" class="hidden p-2 bg-black/60 flex justify-between items-center"><div class="flex gap-2 items-center"><img id="previewImg" class="h-12 w-12 rounded"><span class="text-white text-xs" id="previewText">Ready</span></div><button onclick="cancelImg()" class="text-white">X</button></div>
-
-<!-- INPUT -->
 <div class="p-3 bg-[#1a1a2e] flex items-end gap-2">
 <label class="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center cursor-pointer">📷<input type="file" id="imgInput" accept="image/*" hidden></label>
-<label class="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center cursor-pointer">📎<input type="file" id="fileInput" hidden></label>
-<textarea id="msgInput" rows="1" placeholder="Moner kotha likho..." class="flex-1 bg-white/10 rounded-[20px] px-4 py-3 text-white text-[14px] outline-none resize-none"></textarea>
+<textarea id="msgInput" rows="1" placeholder="Moner kotha..." class="flex-1 bg-white/10 rounded-[20px] px-4 py-3 text-white text-[14px] outline-none"></textarea>
 <button id="sendBtn" class="w-11 h-11 bg-gradient-to-br from-pink-500 to-violet-600 rounded-full text-white">↑</button>
-</div>
-
-<!-- HOLD MENU -->
-<div id="contextMenu" class="hidden fixed z-[600] bg-[#2a2a42] border border-white/20 rounded-2xl shadow-2xl min-w-[200px] overflow-hidden">
-<button onclick="menuAction('copy')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10 text-white">📋 Copy</button>
-<button onclick="menuAction('edit')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10 text-white">✏️ Edit</button>
-<button onclick="menuAction('delete')" class="w-full text-left px-4 py-3 text-red-400 text-[13px] hover:bg-white/10">🗑️ Delete</button>
 </div>
 
 <script type="module">
 const messagesRef = fb.ref(db, "sm_v2_messages");
 const callRef = fb.ref(db, "sm_calls/current");
-let currentUser='', pc, localStream, timerInt, callType='voice';
-let isMuted=false, isHold=false, isSpeaker=true;
-function updateWho(){ const w=document.getElementById('whoami'); if(currentUser){ w.textContent=currentUser; document.getElementById('nameBox').style.display='none';} else{w.textContent='Select'; document.getElementById('nameBox').style.display='flex';}}
-let cu=localStorage.getItem('sm_user')||''; currentUser=cu; updateWho();
-window.setUser=(n)=>{ currentUser=n; localStorage.setItem('sm_user',n); updateWho(); }
-window.checkPass=()=>{ if(document.getElementById('passInput').value==='76435668'){ document.getElementById('lockScreen').style.display='none'; localStorage.setItem('sm_unlocked','yes'); localStorage.setItem('sm_finger_saved','yes');} };
-window.unlockFinger=()=>{ document.getElementById('lockScreen').style.display='none'; };
+const presenceRef = fb.ref(db, "sm_presence");
+let currentUser='', otherUser='', pc, localStream, timerInt;
+let presenceData={};
+
+function setUser(n){
+  currentUser=n; otherUser=n==='Sohel'?'Mou':'Sohel';
+  localStorage.setItem('sm_user',n);
+  document.getElementById('whoami').textContent=n;
+  document.getElementById('headerName').textContent= otherUser + ' ❤️';
+  document.getElementById('nameBox').style.display='none';
+  // presence online
+  fb.set(fb.ref(db,'sm_presence/'+n), {online:true, last:Date.now()});
+  fb.onDisconnect(fb.ref(db,'sm_presence/'+n)).set({online:false, last:Date.now()});
+}
+let cu=localStorage.getItem('sm_user')||''; if(cu) setUser(cu);
+window.setUser=setUser;
+window.checkPass=()=>{ if(document.getElementById('passInput').value==='76435668'){ document.getElementById('lockScreen').style.display='none'; localStorage.setItem('sm_unlocked','yes'); } };
 if(localStorage.getItem('sm_unlocked')==='yes') document.getElementById('lockScreen').style.display='none';
-if(localStorage.getItem('sm_finger_saved')==='yes') document.getElementById('fingerBtn').classList.remove('hidden');
 
-const messagesEl=document.getElementById('messages'); const msgInput=document.getElementById('msgInput'); let pendingImage=null, pendingFile=null;
-let selectedKey=null, selectedText=null, selectedEl=null;
-
-fb.onChildAdded(fb.query(messagesRef, fb.orderByChild('ts')), (snap)=>{
-  const d=snap.val(); if(!d)return; const isMe=d.sender===currentUser;
-  const div=document.createElement('div'); div.className=`flex ${isMe?'justify-end':'justify-start'}`;
-  let inner='';
-  if(d.type==='image'){ inner=`<div class="${isMe?'msg-me':'msg-other'} p-1 max-w-[75%]"><img src="${d.text}" class="rounded-xl max-w-[220px]"><div class="text-[9px] opacity-60 px-2 pt-1">${d.sender} • ${d.time}</div></div>`; }
-  else if(d.type==='file'){ inner=`<div class="${isMe?'msg-me':'msg-other'} px-4 py-2.5 max-w-[78%] text-[14px]"><a href="${d.text}" download="${d.fileName}" class="underline">📎 ${d.fileName}</a><div class="text-[9px] opacity-60 mt-1 text-right">${d.sender} • ${d.time}</div></div>`; }
-  else{ inner=`<div class="${isMe?'msg-me':'msg-other'} px-4 py-2.5 max-w-[78%] text-[14px]"><div class="whitespace-pre-wrap break-words">${d.text}</div><div class="text-[9px] opacity-60 mt-1 text-right">${d.sender} • ${d.time}</div></div>`; }
-  div.innerHTML=inner;
-  // hold menu
-  const show=(e)=>{ selectedKey=snap.key; selectedText=d.text; selectedEl=div; const m=document.getElementById('contextMenu'); m.style.left=(e.pageX||100)+'px'; m.style.top=(e.pageY||100)+'px'; m.classList.remove('hidden'); };
-  div.oncontextmenu=(e)=>{e.preventDefault(); show(e);}; let timer; div.addEventListener('touchstart',(e)=>{timer=setTimeout(()=>show(e.touches[0]),600);}); div.addEventListener('touchend',()=>clearTimeout(timer));
-  messagesEl.appendChild(div); messagesEl.scrollTop=messagesEl.scrollHeight;
+// PRESENCE LISTEN
+fb.onValue(presenceRef, snap=>{
+  presenceData=snap.val()||{};
+  const o=presenceData[otherUser];
+  const el=document.getElementById('statusText');
+  if(o && o.online){ el.textContent='● Online - Active now'; el.className='text-[10px] text-green-400'; }
+  else{ el.textContent='● Offline - Last seen'; el.className='text-[10px] text-white/50'; }
+  // update delivered status
+  if(o && o.online){ markDelivered(); }
 });
 
-async function send(){
-  if(!currentUser){alert('Sohel/Mou select koro');return;}
-  const txt=msgInput.value.trim();
-  if(!txt && !pendingImage && !pendingFile) return;
-  let payload={sender:currentUser,time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),ts:Date.now()};
-  if(pendingImage){ payload.text=pendingImage; payload.type='image'; }
-  else if(pendingFile){ payload.text=pendingFile.data; payload.type='file'; payload.fileName=pendingFile.name; }
-  else{ payload.text=txt; payload.type='text'; }
-  msgInput.value=''; pendingImage=null; pendingFile=null; document.getElementById('previewBox').classList.add('hidden');
-  await fb.push(messagesRef,payload);
+const messagesEl=document.getElementById('messages'); const msgInput=document.getElementById('msgInput');
+let pendingImage=null;
+
+function tick(status){
+  if(status==='seen') return '✓✓ <span style="color:#00aaff">Seen</span>';
+  if(status==='delivered') return '✓✓ Delivered';
+  return '✓ Sent';
 }
-document.getElementById('sendBtn').onclick=send; msgInput.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send();}});
 
-// IMAGE
+fb.onChildAdded(fb.query(messagesRef, fb.orderByChild('ts')), (snap)=>{
+  const d=snap.val(); if(!d) return;
+  const isMe=d.sender===currentUser;
+  // delivered logic
+  if(!isMe && d.status!=='delivered' && d.status!=='seen'){
+    fb.update(fb.ref(db,'sm_v2_messages/'+snap.key), {status:'delivered'});
+    d.status='delivered';
+  }
+  const div=document.createElement('div'); div.className=`flex ${isMe?'justify-end':'justify-start'}`;
+  let inner='';
+  if(d.type==='image'){ inner=`<div class="${isMe?'msg-me':'msg-other'} p-1 max-w-[75%] text-white"><img src="${d.text}" class="rounded-xl max-w-[220px]"><div class="text-[9px] opacity-70 px-2 pt-1 flex justify-between gap-2"><span>${d.time}</span><span>${isMe?tick(d.status||'sent'):''}</span></div></div>`; }
+  else{ inner=`<div class="${isMe?'msg-me':'msg-other'} px-4 py-2.5 max-w-[78%] text-[14px] text-white"><div class="whitespace-pre-wrap break-words">${d.text}</div><div class="text-[9px] opacity-70 mt-1 flex justify-between gap-3"><span>${d.sender}</span><span>${isMe?tick(d.status||'sent'):''}</span></div></div>`; }
+  div.innerHTML=inner; div.dataset.key=snap.key; div.dataset.sender=d.sender;
+  messagesEl.appendChild(div); messagesEl.scrollTop=messagesEl.scrollHeight;
+  // seen logic - if i am viewing
+  if(!isMe){ setTimeout(()=> markSeen(), 1000); }
+});
+
+function markDelivered(){
+  // when other comes online, all my sent msgs become delivered
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    // handled by firebase update already
+  });
+}
+function markSeen(){
+  // all messages from other become seen
+  const updates={};
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key=el.dataset.key; const sender=el.dataset.sender;
+    if(sender!==currentUser && sender!==''){ updates['sm_v2_messages/'+key+'/status']='seen'; }
+  });
+  if(Object.keys(updates).length>0){ fb.update(fb.ref(db), updates); }
+}
+messagesEl.addEventListener('scroll', ()=>{ if(messagesEl.scrollTop + messagesEl.clientHeight >= messagesEl.scrollHeight -100){ markSeen(); } });
+
+async function send(){
+  if(!currentUser){ alert('Sohel/Mou select koro'); return; }
+  const txt=msgInput.value.trim(); if(!txt && !pendingImage) return;
+  let payload={sender:currentUser, time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), ts:Date.now(), status:'sent'};
+  if(pendingImage){ payload.text=pendingImage; payload.type='image'; } else { payload.text=txt; payload.type='text'; }
+  msgInput.value=''; pendingImage=null;
+  await fb.push(messagesRef, payload);
+}
+document.getElementById('sendBtn').onclick=send;
+msgInput.addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); }});
+
 document.getElementById('imgInput').onchange=(e)=>{
-  const f=e.target.files[0]; if(!f)return; const r=new FileReader();
-  r.onload=()=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); const max=600; let w=img.width,h=img.height; if(w>h){ if(w>max){h*=max/w; w=max;}} else{if(h>max){w*=max/h; h=max;}} c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); pendingImage=c.toDataURL('image/jpeg',0.6); document.getElementById('previewImg').src=pendingImage; document.getElementById('previewText').innerText='Photo ready'; document.getElementById('previewBox').classList.remove('hidden'); }; img.src=r.result; }; r.readAsDataURL(f);
+  const f=e.target.files[0]; if(!f) return; const r=new FileReader();
+  r.onload=()=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); const max=600; let w=img.width,h=img.height; if(w>h){ if(w>max){h*=max/w; w=max;}} else{if(h>max){w*=max/h; h=max;}} c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); pendingImage=c.toDataURL('image/jpeg',0.6); send(); }; img.src=r.result; }; r.readAsDataURL(f);
 };
-// FILE
-document.getElementById('fileInput').onchange=(e)=>{
-  const f=e.target.files[0]; if(!f)return; const r=new FileReader();
-  r.onload=()=>{ pendingFile={data:r.result,name:f.name}; document.getElementById('previewImg').src=''; document.getElementById('previewText').innerText='File: '+f.name; document.getElementById('previewBox').classList.remove('hidden'); };
-  r.readAsDataURL(f);
-};
-window.cancelImg=()=>{ pendingImage=null; pendingFile=null; document.getElementById('previewBox').classList.add('hidden');};
 
-// CALL
+// CALL SYSTEM WITH RINGING/CALLING + SOUND
 const iceServers={iceServers:[{urls:'stun:stun.l.google.com:19302'}]};
 function createPC(){ pc=new RTCPeerConnection(iceServers); pc.onicecandidate=e=>{ if(e.candidate){ fb.push(fb.ref(db,'sm_calls/candidates/'+currentUser), e.candidate.toJSON()); } }; pc.ontrack=e=>{ document.getElementById('remoteVideo').srcObject=e.streams[0]; }; return pc; }
-async function startCall(type){ if(!currentUser){ alert('Age Sohel/Mou select koro'); return; } callType=type; const other = currentUser==='Sohel'?'Mou':'Sohel'; document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callName').textContent= type==='video'? `Calling ${other}...`:`Voice calling ${other}...`; document.getElementById('ringTone').play().catch(()=>{}); localStream = await navigator.mediaDevices.getUserMedia({video:type==='video', audio:true}); document.getElementById('localVideo').srcObject=localStream; if(type==='voice') document.getElementById('localVideo').style.display='none'; else document.getElementById('localVideo').style.display='block'; const pc1=createPC(); localStream.getTracks().forEach(t=>pc1.addTrack(t,localStream)); const offer=await pc1.createOffer(); await pc1.setLocalDescription(offer); await fb.set(callRef, {offer: {type:offer.type, sdp:offer.sdp}, caller:currentUser, callee:other, type:type, state:'calling'}); }
-async function acceptCall(data){ callType=data.type; document.getElementById('incomingBox').classList.add('hidden'); document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callName').textContent=`${data.caller} er sathe connected`; document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); localStream = await navigator.mediaDevices.getUserMedia({video:data.type==='video', audio:true}); document.getElementById('localVideo').srcObject=localStream; if(data.type==='voice') document.getElementById('localVideo').style.display='none'; else document.getElementById('localVideo').style.display='block'; const pc2=createPC(); localStream.getTracks().forEach(t=>pc2.addTrack(t,localStream)); await pc2.setRemoteDescription(new RTCSessionDescription(data.offer)); const answer=await pc2.createAnswer(); await pc2.setLocalDescription(answer); await fb.set(fb.ref(db,'sm_calls/current/answer'), {type:answer.type, sdp:answer.sdp}); await fb.set(fb.ref(db,'sm_calls/current/state'), 'connected'); startTimer(); listenCandidates(); }
-function startTimer(){ let s=0; timerInt=setInterval(()=>{ s++; const m=String(Math.floor(s/60)).padStart(2,'0'); const sec=String(s%60).padStart(2,'0'); document.getElementById('callTimer').textContent=`${m}:${sec}`; },1000); }
-function endCall(){ if(pc) pc.close(); pc=null; if(localStream) localStream.getTracks().forEach(t=>t.stop()); clearInterval(timerInt); document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); document.getElementById('callScreen').classList.add('hidden'); document.getElementById('remoteVideo').srcObject=null; fb.remove(callRef); fb.remove(fb.ref(db,'sm_calls/candidates')); }
-function listenCandidates(){ const other = currentUser==='Sohel'?'Mou':'Sohel'; fb.onChildAdded(fb.ref(db,'sm_calls/candidates/'+other), async snap=>{ const c=snap.val(); if(pc && c){ try{ await pc.addIceCandidate(new RTCIceCandidate(c)); }catch(e){} } }); }
-fb.onValue(callRef, async snap=>{ const data=snap.val(); if(!data) return; if(!currentUser) return; if(data.state==='calling' && data.callee===currentUser){ document.getElementById('incomingText').textContent=`${data.caller} is calling... (${data.type})`; document.getElementById('incomingBox').classList.remove('hidden'); window._incomingData=data; document.getElementById('ringTone').play().catch(()=>{}); if(navigator.vibrate) navigator.vibrate([500,200,500,300,1000]); } if(data.answer && data.caller===currentUser && pc){ await pc.setRemoteDescription(new RTCSessionDescription(data.answer)); document.getElementById('callName').textContent=`Connected with ${data.callee}`; document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); startTimer(); listenCandidates(); } });
-fb.onChildRemoved(callRef, ()=>{ endCall(); document.getElementById('incomingBox').classList.add('hidden'); });
+
+async function startCall(type){
+  if(!currentUser){ alert('Select user'); return; }
+  otherUser=currentUser==='Sohel'?'Mou':'Sohel';
+  const otherOnline = presenceData[otherUser] && presenceData[otherUser].online;
+  document.getElementById('callScreen').classList.remove('hidden');
+  document.getElementById('callName').textContent= otherOnline ? 'Ringing...' : 'Calling...';
+  // WhatsApp style outgoing tone
+  document.getElementById('callTone').play().catch(()=>{});
+  localStream = await navigator.mediaDevices.getUserMedia({video:type==='video', audio:true});
+  document.getElementById('localVideo').srcObject=localStream;
+  const pc1=createPC(); localStream.getTracks().forEach(t=>pc1.addTrack(t,localStream));
+  const offer=await pc1.createOffer(); await pc1.setLocalDescription(offer);
+  await fb.set(callRef, {offer:{type:offer.type, sdp:offer.sdp}, caller:currentUser, callee:otherUser, type:type, state:'calling'});
+}
+async function acceptCall(data){
+  document.getElementById('incomingBox').classList.add('hidden');
+  document.getElementById('callScreen').classList.remove('hidden');
+  document.getElementById('callName').textContent='Connected';
+  document.getElementById('ringTone').pause(); document.getElementById('callTone').pause();
+  if(navigator.vibrate) navigator.vibrate(0);
+  localStream = await navigator.mediaDevices.getUserMedia({video:data.type==='video', audio:true});
+  document.getElementById('localVideo').srcObject=localStream;
+  const pc2=createPC(); localStream.getTracks().forEach(t=>pc2.addTrack(t,localStream));
+  await pc2.setRemoteDescription(new RTCSessionDescription(data.offer));
+  const answer=await pc2.createAnswer(); await pc2.setLocalDescription(answer);
+  await fb.set(fb.ref(db,'sm_calls/current/answer'), {type:answer.type, sdp:answer.sdp});
+  await fb.set(fb.ref(db,'sm_calls/current/state'), 'connected');
+}
+
+function endCall(){ if(pc) pc.close(); pc=null; if(localStream) localStream.getTracks().forEach(t=>t.stop()); clearInterval(timerInt); document.getElementById('ringTone').pause(); document.getElementById('callTone').pause(); if(navigator.vibrate) navigator.vibrate(0); document.getElementById('callScreen').classList.add('hidden'); document.getElementById('remoteVideo').srcObject=null; fb.remove(callRef); }
+
+fb.onValue(callRef, async snap=>{
+  const data=snap.val(); if(!data||!currentUser) return;
+  if(data.state==='calling' && data.callee===currentUser){
+    document.getElementById('incomingText').textContent=`${data.caller} is calling...`;
+    document.getElementById('incomingBox').classList.remove('hidden');
+    window._incomingData=data;
+    document.getElementById('ringTone').play().catch(()=>{});
+    if(navigator.vibrate) navigator.vibrate([500,200,500,300,1000]);
+  }
+  if(data.answer && data.caller===currentUser && pc){
+    await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+    document.getElementById('callName').textContent='Ringing accepted - Connected';
+    document.getElementById('callTone').pause(); document.getElementById('ringTone').pause();
+  }
+  if(data.state==='connected' && data.caller===currentUser){
+    document.getElementById('callName').textContent=`Connected with ${data.callee}`;
+  }
+});
 
 document.getElementById('voiceBtn').onclick=()=>startCall('voice');
 document.getElementById('videoBtn').onclick=()=>startCall('video');
 document.getElementById('acceptBtn').onclick=()=>{ if(window._incomingData) acceptCall(window._incomingData); };
-document.getElementById('declineBtn').onclick=()=>{ document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); fb.remove(callRef); document.getElementById('incomingBox').classList.add('hidden'); };
+document.getElementById('declineBtn').onclick=()=>{ document.getElementById('ringTone').pause(); document.getElementById('callTone').pause(); fb.remove(callRef); document.getElementById('incomingBox').classList.add('hidden'); };
 document.getElementById('endBtn').onclick=endCall;
-document.getElementById('muteBtn').onclick=()=>{ isMuted=!isMuted; if(localStream) localStream.getAudioTracks().forEach(t=>t.enabled=!isMuted); document.getElementById('muteBtn').textContent=isMuted?'🔇':'🎤'; };
-document.getElementById('speakerBtn').onclick=()=>{ isSpeaker=!isSpeaker; document.getElementById('speakerBtn').textContent=isSpeaker?'🔊':'🔈'; };
-document.getElementById('holdBtn').onclick=()=>{ isHold=!isHold; if(localStream) localStream.getTracks().forEach(t=>t.enabled=!isHold); document.getElementById('holdBtn').textContent=isHold?'▶️':'⏸️'; document.getElementById('callName').textContent=isHold?'On Hold...':'Connected'; };
-document.getElementById('whoami').onclick=()=>{ localStorage.removeItem('sm_user'); currentUser=''; updateWho(); };
-
-window.menuAction=async(a)=>{
-  document.getElementById('contextMenu').classList.add('hidden');
-  if(a==='copy') navigator.clipboard.writeText(selectedText);
-  if(a==='delete' && selectedKey){ await fb.remove(fb.ref(db,'sm_v2_messages/'+selectedKey)); selectedEl?.remove(); }
-  if(a==='edit' && selectedText){ document.getElementById('msgInput').value=selectedText; if(selectedKey) await fb.remove(fb.ref(db,'sm_v2_messages/'+selectedKey)); selectedEl?.remove(); }
-};
-document.addEventListener('click',()=>document.getElementById('contextMenu').classList.add('hidden'));
+document.getElementById('muteBtn').onclick=(e)=>{ if(localStream) localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled); e.target.textContent=e.target.textContent==='🎤'?'🔇':'🎤'; };
+document.getElementById('whoami').onclick=()=>{ localStorage.removeItem('sm_user'); location.reload(); };
 </script>
 </body>
 </html>
