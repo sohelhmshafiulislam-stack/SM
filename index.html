@@ -481,5 +481,8 @@
   if(window.matchMedia("(max-width:700px)").matches)appEl.classList.add("chat-open");
 })();
 </script>
+ <script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}
+</script>
 </body>
 </html>
