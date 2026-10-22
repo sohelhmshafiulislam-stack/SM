@@ -1,58 +1,68 @@
 <!DOCTYPE html>
-<html><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sohel ❤️ Mou</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sohel ❤️ Mou - Private</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#0a0a14;font-family:sans-serif}</style>
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {getDatabase, ref, push, onChildAdded, onValue, remove, set, update} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-const firebaseConfig={databaseURL:"https://YOUR_PROJECT-default-rtdb.firebaseio.com"};
-const app=initializeApp(firebaseConfig); const db=getDatabase(app);
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded, onValue, remove, set, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyD-2OqkcSev3XzcAt4-p2kGLkGYYqL8hzE",
+  authDomain: "sm-chat-da9f7.firebaseapp.com",
+  projectId: "sm-chat-da9f7",
+  storageBucket: "sm-chat-da9f7.firebasestorage.app",
+  messagingSenderId: "854162073261",
+  appId: "1:854162073261:web:95b663faf367b19d048824",
+  databaseURL: "https://sm-chat-da9f7-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 window.db=db; window.fb={ref,push,onChildAdded,onValue,remove,set,update};
 </script>
-<style>body{background:#0a0a14;font-family:sans-serif}</style>
-</head><body class="text-white">
+</head>
+<body class="text-white">
 <audio id="ringTone" loop src="https://actions.google.com/sounds/v1/alarms/phone_ringing.ogg"></audio>
 
-<!-- LOCK + FINGERPRINT -->
 <div id="lockScreen" class="fixed inset-0 bg-[#0a0a14] z-[300] flex flex-col items-center justify-center p-6">
   <div class="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center text-3xl">🔒</div>
   <h2 class="font-bold text-xl mt-4">Sohel ❤️ Mou Private</h2>
-  <input id="passInput" type="password" placeholder="Password 76435668" class="mt-6 w-full max-w-[300px] bg-[#1e1e32] border border-white/20 rounded-full px-6 py-3 text-center outline-none">
+  <input id="passInput" type="password" placeholder="Password" class="mt-6 w-full max-w-[300px] bg-[#1e1e32] border border-white/20 rounded-full px-6 py-3 text-center outline-none">
   <button onclick="checkPass()" class="mt-3 w-full max-w-[300px] bg-gradient-to-br from-pink-500 to-violet-600 font-bold py-3 rounded-full">Unlock</button>
   <button id="fingerBtn" onclick="unlockFinger()" class="mt-3 w-full max-w-[300px] bg-[#1e1e32] border border-white/20 py-3 rounded-full text-sm hidden">👆 Fingerprint diye Unlock</button>
-  <p id="passError" class="text-red-400 text-xs mt-3 hidden">Wrong password!</p>
-  <p class="text-white/30 text-[10px] mt-6">Password: 76435668 - Only You & Mou</p>
+  <p id="passError" class="text-red-400 text-xs mt-3 hidden">Wrong password! Use 76435668</p>
 </div>
 
-<!-- INCOMING CALL -->
 <div id="incomingCallDiv" class="hidden fixed inset-0 bg-black/90 z-[250] flex flex-col items-center justify-center">
   <div class="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 animate-pulse flex items-center justify-center text-3xl">📞</div>
-  <p class="font-bold text-2xl mt-5" id="callerName">Calling...</p>
+  <p class="font-bold text-2xl mt-5" id="callerName">Mou is calling...</p>
   <div class="flex gap-8 mt-10"><button onclick="endCall()" class="bg-red-500 w-16 h-16 rounded-full text-2xl">❌</button><button onclick="acceptCall()" class="bg-green-500 w-16 h-16 rounded-full text-2xl">📞</button></div>
 </div>
 <div id="callScreen" class="hidden fixed inset-0 bg-[#0a0a14] z-[240] flex flex-col items-center justify-center"><p id="callStatus" class="font-bold text-xl">Calling...</p><button onclick="endCall()" class="mt-20 bg-red-500 w-20 h-20 rounded-full text-3xl">❌</button></div>
 
-<div id="chatBox" class="p-4 pb-[100px] space-y-3"></div>
-<div class="fixed bottom-0 left-0 right-0 bg-[#14141f] border-t border-white/10 p-3 flex gap-2 z-10">
-<input id="msgInput" class="flex-1 bg-[#1e1e32] rounded-full px-5 py-3 text-[14px] outline-none" placeholder="Message..."><button onclick="makeCall()" class="bg-[#1e1e32] w-12 h-12 rounded-full">📞</button><button id="sendBtn" class="bg-gradient-to-br from-pink-500 to-violet-600 rounded-full px-6 font-bold">Send</button>
+<div id="chatBox" class="p-4 pb-[100px] space-y-3 min-h-screen"></div>
+<div class="fixed bottom-0 left-0 right-0 bg-[#14141f] border-t border-white/10 p-3 flex gap-2">
+  <input id="msgInput" class="flex-1 bg-[#1e1e32] rounded-full px-5 py-3 text-[14px] outline-none" placeholder="Message...">
+  <button onclick="makeCall()" class="bg-[#1e1e32] w-12 h-12 rounded-full">📞</button>
+  <button id="sendBtn" class="bg-gradient-to-br from-pink-500 to-violet-600 rounded-full px-6 font-bold">Send</button>
 </div>
 
 <div id="contextMenu" class="hidden fixed z-[200] bg-[#2a2a42] border border-white/20 rounded-2xl shadow-2xl min-w-[200px] overflow-hidden">
-<button onclick="menuAction('copy')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">📋 Copy</button>
-<button onclick="menuAction('cut')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">✂️ Cut</button>
-<button onclick="menuAction('paste')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">📄 Paste</button>
-<button onclick="menuAction('edit')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">✏️ Edit</button>
-<button onclick="menuAction('react')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">❤️ React</button>
-<button onclick="menuAction('delete')" class="w-full text-left px-4 py-3 text-red-400 text-[13px] hover:bg-white/10">🗑️ Delete</button>
+  <button onclick="menuAction('copy')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">📋 Copy</button>
+  <button onclick="menuAction('cut')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">✂️ Cut</button>
+  <button onclick="menuAction('paste')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">📄 Paste</button>
+  <button onclick="menuAction('edit')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">✏️ Edit</button>
+  <button onclick="menuAction('react')" class="w-full text-left px-4 py-3 text-[13px] hover:bg-white/10">❤️ React</button>
+  <button onclick="menuAction('delete')" class="w-full text-left px-4 py-3 text-red-400 text-[13px] hover:bg-white/10">🗑️ Delete</button>
 </div>
 
 <script type="module">
 const currentUserId=localStorage.getItem('sm_user')||'Sohel';
-const messagesRef=fb.ref(db,'sm_all_messages'); const callRef=fb.ref(db,'sm_current_call');
+const messagesRef=fb.ref(db,'sm_v2_messages'); 
+const callRef=fb.ref(db,'sm_current_call');
 let selectedKey=null,selectedText=null,selectedEl=null;
 
-// PASSWORD + FINGERPRINT
 window.checkPass=()=>{
  if(document.getElementById('passInput').value==='76435668'){
    document.getElementById('lockScreen').style.display='none';
@@ -60,53 +70,78 @@ window.checkPass=()=>{
    localStorage.setItem('sm_finger_saved','yes');
    document.getElementById('fingerBtn').classList.remove('hidden');
    if("Notification" in window && Notification.permission!=="granted") Notification.requestPermission();
-   if(window.PublicKeyCredential){ /* save finger */ }
  } else document.getElementById('passError').classList.remove('hidden');
 }
 window.unlockFinger=async()=>{
- try{
-   if(localStorage.getItem('sm_finger_saved')==='yes'){
-     // Biometric prompt
-     const cred=await navigator.credentials.get({publicKey:{challenge:new Uint8Array([1,2,3,4]),allowCredentials:[]},mediation:'optional'}).catch(()=>null);
-     document.getElementById('lockScreen').style.display='none';
-   } else {
-     // fallback: just unlock if saved before
-     document.getElementById('lockScreen').style.display='none';
-   }
- }catch(e){ document.getElementById('lockScreen').style.display='none'; }
+ document.getElementById('lockScreen').style.display='none';
+ if(navigator.vibrate) navigator.vibrate(100);
 }
 if(localStorage.getItem('sm_unlocked')==='yes'){
  document.getElementById('lockScreen').style.display='none';
- if(localStorage.getItem('sm_finger_saved')==='yes') document.getElementById('fingerBtn').classList.remove('hidden');
 }
-if(localStorage.getItem('sm_finger_saved')==='yes') document.getElementById('fingerBtn').classList.remove('hidden');
+if(localStorage.getItem('sm_finger_saved')==='yes'){
+ document.getElementById('fingerBtn').classList.remove('hidden');
+ document.getElementById('fingerBtn').classList.add('flex','items-center','justify-center','gap-2');
+}
 
-// CHAT + HOLD MENU + NOTIFICATION
-document.getElementById('sendBtn').onclick=async()=>{const t=document.getElementById('msgInput').value.trim(); if(!t) return; await fb.push(messagesRef,{text:t,userId:currentUserId,time:Date.now()}); document.getElementById('msgInput').value='';};
+document.getElementById('sendBtn').onclick=async()=>{
+ const t=document.getElementById('msgInput').value.trim(); if(!t) return;
+ await fb.push(messagesRef,{text:t,userId:currentUserId,sender:currentUserId,time:Date.now()});
+ document.getElementById('msgInput').value='';
+};
+
 fb.onChildAdded(messagesRef,(snap)=>{
- const d=snap.val(); const key=snap.key; const div=document.createElement('div');
- div.className='bg-[#1e1e32] p-3 rounded-2xl max-w-[78%] text-[14px]'; if(d.userId===currentUserId) div.classList.add('ml-auto','bg-gradient-to-br','from-pink-500','to-violet-600');
- div.innerText=d.text; const show=(e)=>{selectedKey=key;selectedText=d.text;selectedEl=div; const m=document.getElementById('contextMenu'); m.style.left=(e.pageX||100)+'px'; m.style.top=(e.pageY||100)+'px'; m.classList.remove('hidden');};
- div.oncontextmenu=(e)=>{e.preventDefault();show(e);}; let t; div.addEventListener('touchstart',(e)=>{t=setTimeout(()=>show(e.touches[0]),600);}); div.addEventListener('touchend',()=>clearTimeout(t));
- document.getElementById('chatBox').appendChild(div); window.scrollTo(0,document.body.scrollHeight);
- if(document.hidden && Notification.permission==="granted" && d.userId!==currentUserId){ new Notification('Mou 💌',{body:d.text}); if(navigator.vibrate) navigator.vibrate([300,200,300]); }
+ const d=snap.val(); const key=snap.key;
+ const div=document.createElement('div');
+ div.className='bg-[#1e1e32] p-3 rounded-2xl max-w-[78%] text-[14px] break-words';
+ if(d.userId===currentUserId || d.sender===currentUserId) div.classList.add('ml-auto','bg-gradient-to-br','from-pink-500','to-violet-600');
+ div.innerText=d.text;
+ const show=(e)=>{
+   selectedKey=key; selectedText=d.text; selectedEl=div;
+   const m=document.getElementById('contextMenu');
+   const x=e.pageX||e.touches?.[0]?.pageX||100, y=e.pageY||e.touches?.[0]?.pageY||100;
+   m.style.left=x+'px'; m.style.top=y+'px'; m.classList.remove('hidden');
+ };
+ div.oncontextmenu=(e)=>{e.preventDefault(); show(e);};
+ let timer; div.addEventListener('touchstart',(e)=>{timer=setTimeout(()=>show(e.touches[0]),600);});
+ div.addEventListener('touchend',()=>clearTimeout(timer));
+ document.getElementById('chatBox').appendChild(div);
+ window.scrollTo(0,document.body.scrollHeight);
+ if(document.hidden && Notification.permission==="granted" && d.userId!==currentUserId){
+   new Notification('Mou 💌 New Message', {body:d.text});
+   if(navigator.vibrate) navigator.vibrate([300,200,300]);
+ }
 });
+
 window.menuAction=async(a)=>{
  document.getElementById('contextMenu').classList.add('hidden');
- if(a==='copy') navigator.clipboard.writeText(selectedText);
- if(a==='cut'){navigator.clipboard.writeText(selectedText); if(selectedKey) await fb.remove(fb.ref(db,'sm_all_messages/'+selectedKey)); selectedEl?.remove();}
- if(a==='delete'){if(selectedKey) await fb.remove(fb.ref(db,'sm_all_messages/'+selectedKey)); selectedEl?.remove();}
- if(a==='edit'){document.getElementById('msgInput').value=selectedText; if(selectedKey) await fb.remove(fb.ref(db,'sm_all_messages/'+selectedKey)); selectedEl?.remove();}
- if(a==='react') selectedEl.innerHTML+=' ❤️';
- if(a==='paste'){const t=await navigator.clipboard.readText(); document.getElementById('msgInput').value+=t;}
+ if(a==='copy' && selectedText) navigator.clipboard.writeText(selectedText);
+ if(a==='cut' && selectedText){ navigator.clipboard.writeText(selectedText); if(selectedKey) await fb.remove(fb.ref(db,'sm_v2_messages/'+selectedKey)); selectedEl?.remove(); }
+ if(a==='delete' && selectedKey){ await fb.remove(fb.ref(db,'sm_v2_messages/'+selectedKey)); selectedEl?.remove(); }
+ if(a==='edit' && selectedText){ document.getElementById('msgInput').value=selectedText; if(selectedKey) await fb.remove(fb.ref(db,'sm_v2_messages/'+selectedKey)); selectedEl?.remove(); document.getElementById('msgInput').focus(); }
+ if(a==='react' && selectedEl) selectedEl.innerHTML+=' ❤️';
+ if(a==='paste'){ const t=await navigator.clipboard.readText(); document.getElementById('msgInput').value+=t; }
 };
 document.addEventListener('click',()=>document.getElementById('contextMenu').classList.add('hidden'));
 
-// CALL - RING + VIBRATION + BOTH CUT
-window.makeCall=async()=>{await fb.set(callRef,{status:'calling',caller:currentUserId}); document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callStatus').innerText='Calling Mou...';};
-window.acceptCall=async()=>{document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); document.getElementById('incomingCallDiv').classList.add('hidden'); document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callStatus').innerText='Connected ❤️'; await fb.update(callRef,{status:'connected'});};
-window.endCall=async()=>{document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); await fb.set(callRef,{status:'ended'}); closeCall();};
-function closeCall(){document.getElementById('callScreen').classList.add('hidden'); document.getElementById('incomingCallDiv').classList.add('hidden');}
-fb.onValue(callRef,(snap)=>{const c=snap.val(); if(!c) return; if(c.status==='calling' && c.caller!==currentUserId){document.getElementById('incomingCallDiv').classList.remove('hidden'); document.getElementById('callerName').innerText=(c.caller||'Mou')+' calling...'; document.getElementById('ringTone').play().catch(()=>{}); if(navigator.vibrate) navigator.vibrate([500,300,500,300,1000]);} if(c.status==='ended'){document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); closeCall(); setTimeout(()=>fb.set(callRef,{status:'idle'}),1000);}});
+window.makeCall=async()=>{ await fb.set(callRef,{status:'calling',caller:currentUserId,time:Date.now()}); document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callStatus').innerText='Calling Mou...'; };
+window.acceptCall=async()=>{ document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); document.getElementById('incomingCallDiv').classList.add('hidden'); document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callStatus').innerText='Connected ❤️'; await fb.update(callRef,{status:'connected'}); };
+window.endCall=async()=>{ document.getElementById('ringTone').pause(); if(navigator.vibrate) navigator.vibrate(0); await fb.set(callRef,{status:'ended',caller:currentUserId}); closeCall(); };
+function closeCall(){ document.getElementById('callScreen').classList.add('hidden'); document.getElementById('incomingCallDiv').classList.add('hidden'); }
+fb.onValue(callRef,(snap)=>{
+ const c=snap.val(); if(!c) return;
+ if(c.status==='calling' && c.caller!==currentUserId){
+   document.getElementById('incomingCallDiv').classList.remove('hidden');
+   document.getElementById('callerName').innerText=(c.caller||'Mou')+' is calling...';
+   document.getElementById('ringTone').play().catch(()=>{});
+   if(navigator.vibrate) navigator.vibrate([500,300,500,300,1000]);
+ }
+ if(c.status==='ended'){
+   document.getElementById('ringTone').pause();
+   if(navigator.vibrate) navigator.vibrate(0);
+   closeCall();
+   setTimeout(()=>fb.set(callRef,{status:'idle'}),1200);
+ }
+});
 </script>
 </body></html>
