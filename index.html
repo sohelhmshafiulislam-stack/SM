@@ -1,79 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Select</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sohel ❤️ Mou - Final Fixed</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+body{font-family:sans-serif;background:#0f0f1a;overscroll-behavior:none}
+#messages{position:relative;background:rgba(18,18,31,0.9);min-height:60vh}
+#messages::before{content:"";position:absolute;inset:0;background:url('bg.jpg') center/cover no-repeat;opacity:0.22;filter:blur(2px);z-index:-1}
+.msg-me{background:linear-gradient(135deg,#ff4d8d,#ff7eb3);border-radius:18px 18px 2px 18px}
+.msg-other{background:#2a2a4a;border-radius:18px 18px 18px 2px}
+.msg-wrap{position:relative;transition:transform 0.2s ease;touch-action:pan-y}
+.msg-wrap.swiping{transition:none}
+.reply-preview{border-left:3px solid #ff4d8d;background:rgba(255,255,255,0.1);padding:6px 10px;border-radius:8px;margin-bottom:6px;font-size:11px}
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:none;align-items:center;justify-content:center}
+#lightbox img,#lightbox video{max-width:95%;max-height:90%;border-radius:12px}
+#localVideo{position:absolute;touch-action:none;cursor:grab;z-index:30;right:16px;bottom:120px;box-shadow:0 8px 20px rgba(0,0,0,0.6)}
+#localVideo.dragging{transform:scale(1.05);box-shadow:0 0 20px #ff4d8d}
+.reply-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:0;transition:0.2s;font-size:18px}
+</style>
 </head>
-<body class="bg-[#0f0f1a] text-white p-4 max-w-[400px] mx-auto">
-<h1 id="header" class="text-xl font-bold mb-2">Select User</h1>
-<p id="status" class="text-xs text-white/50 mb-4">Select koro</p>
+<body class="h-[100dvh] flex flex-col max-w-[480px] mx-auto relative text-white">
+<audio id="remoteAudio" autoplay playsinline></audio>
+<div id="lightbox" onclick="this.style.display='none'"><img id="lbImg" style="display:none"><video id="lbVideo" controls playsinline style="display:none"></video></div>
 
-<div id="nameBox" class="flex gap-2 mb-4">
-<button onclick="setUser('Sohel')" style="flex:1;padding:12px;background:white;color:black;border-radius:20px;font-weight:bold;">I am Sohel</button>
-<button onclick="setUser('Mou')" style="flex:1;padding:12px;background:#ff4d8d;color:white;border-radius:20px;font-weight:bold;">I am Mou</button>
+<header class="bg-[#1a1a2e] p-3 flex items-center justify-between border-b border-white/10">
+<div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center font-bold text-sm">SM</div><div><h1 id="headerName" class="text-[15px] font-semibold">Select User</h1><p id="statusText" class="text-[11px] text-white/50">Select koro</p></div></div>
+<div class="flex gap-2"><button onclick="startCall(false)" class="w-9 h-9 bg-white/10 rounded-full">📞</button><button onclick="startCall(true)" class="w-9 h-9 bg-white/10 rounded-full">📹</button><button id="whoamiBtn" class="text-[10px] bg-white/10 px-2 py-1 rounded-full"></button></div>
+</header>
+
+<div id="nameBox" class="p-2 bg-[#1a1a2e] flex gap-2">
+<button onclick="setUser('Sohel')" class="flex-1 py-3 rounded-full bg-white text-black font-bold text-[15px]">I am Sohel</button>
+<button onclick="setUser('Mou')" class="flex-1 py-3 rounded-full bg-pink-600 text-white font-bold text-[15px]">I am Mou</button>
 </div>
 
-<div id="messages" style="height:300px;overflow-y:auto;background:#1a1a2e;padding:10px;border-radius:10px;margin-bottom:10px;"></div>
+<div id="messages" class="flex-1 overflow-y-auto p-4 space-y-5"></div>
 
-<div class="flex gap-2">
-<input id="msgInput" placeholder="Aa" style="flex:1;padding:12px;background:#2a2a42;border-radius:20px;color:white;outline:none;">
-<button onclick="sendMessage()" style="padding:12px 20px;background:#ff4d8d;border-radius:20px;">Send</button>
+<!-- CALL SCREEN - NO RINGTONE -->
+<div id="callScreen" class="hidden absolute inset-0 bg-[#0f141a] z-50 flex flex-col">
+<div class="flex items-center justify-between p-4"><button onclick="endCall()" class="w-10 h-10 bg-white/10 rounded-full">✕</button><div class="text-center"><p id="callName" class="font-bold">Mou</p><p id="callTimer" class="text-xs text-white/60">Calling...</p></div><button onclick="endCall()" class="w-10 h-10 bg-red-600 rounded-full">📞</button></div>
+<div id="callVideoArea" class="flex-1 flex flex-col items-center justify-center relative overflow-hidden">
+<img id="callAvatar" src="bg.jpg" class="w-32 h-32 rounded-full object-cover border-4 border-white/10"><p id="callStatusText" class="text-white/50 text-sm mt-3">Calling...</p>
+<video id="remoteVideo" autoplay playsinline class="hidden absolute inset-0 w-full h-full object-cover"></video>
+<video id="localVideo" autoplay muted playsinline class="hidden w-28 h-40 bg-[#222] rounded-xl border border-white/20 object-cover"></video>
+<p id="tapHint" class="absolute bottom-28 text-white/40 text-[11px]">Tap to show controls • Drag small video</p>
+</div>
+<div id="videoControls" class="bg-[#1a212b] rounded-t-[28px] p-5"><div class="grid grid-cols-3 gap-4">
+<button id="speakerBtn" class="flex flex-col items-center gap-1"><div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center text-xl">🔈</div><span class="text-[10px]">Earpiece</span></button>
+<button id="muteBtn" class="flex flex-col items-center gap-1"><div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center text-xl">🎤</div><span class="text-[10px]">Mute</span></button>
+<button onclick="endCall()" class="flex flex-col items-center gap-1"><div class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center text-xl">📞</div><span class="text-[10px]">End</span></button>
+</div></div>
 </div>
 
-<p id="debug" class="text-[10px] text-white/30 mt-4"></p>
+<div id="incomingBox" class="hidden absolute top-20 left-4 right-4 bg-[#1e1e32] border border-pink-500/50 p-4 rounded-2xl z-40 flex justify-between items-center"><div><p id="incomingText" class="text-sm font-bold">Calling...</p><p class="text-[11px] text-white/50">No sound - only visual</p></div><div class="flex gap-3"><button onclick="declineCall()" class="w-12 h-12 bg-red-600 rounded-full">❌</button><button onclick="acceptCall()" class="w-12 h-12 bg-green-500 rounded-full">✅</button></div></div>
+
+<div id="replyBox" class="hidden p-2.5 bg-[#1a1a2e] border-t border-pink-500/30 flex justify-between items-center"><div class="flex-1"><p class="text-[11px] text-pink-400 font-bold">Replying to <span id="replyToName"></span></p><p id="replyToText" class="text-[12px] text-white/70 truncate max-w-[280px]"></p></div><button onclick="cancelReply()" class="w-7 h-7 bg-white/10 rounded-full text-xs">✕</button></div>
+<div id="previewBox" class="hidden p-2 bg-[#1a1a2e] border-t flex justify-between items-center text-xs"><span id="previewText"></span><button onclick="cancelPreview()" class="px-3 py-1 bg-red-600 rounded-full">X</button></div>
+
+<div class="bg-[#1a1a2e] p-2.5 flex items-end gap-2 border-t border-white/10">
+<button onclick="document.getElementById('imgInput').click()" class="w-11 h-11 bg-[#2a2a42] rounded-full">📷</button><input type="file" id="imgInput" accept="image/*,video/*" hidden>
+<button onclick="document.getElementById('fileInput').click()" class="w-11 h-11 bg-[#2a2a42] rounded-full">📎</button><input type="file" id="fileInput" accept=".pdf,.doc,.docx" hidden>
+<div class="flex-1 bg-[#2a2a42] rounded-[22px] px-4 py-1.5 flex items-end"><textarea id="msgInput" rows="1" placeholder="Aa" class="flex-1 bg-transparent text-white text-[15px] outline-none resize-none py-2 max-h-[100px]"></textarea></div>
+<button id="micBtn" class="w-11 h-11 bg-[#2a2a42] rounded-full">🎙️</button><button onclick="sendMessage()" class="w-11 h-11 bg-gradient-to-br from-pink-500 to-violet-600 rounded-full">➤</button>
+</div>
 
 <script>
 var firebaseConfig={apiKey:"AIzaSyD-2OqkcSev3XzcAt4-p2kGLkGYYqL8hzE",authDomain:"sm-chat-da9f7.firebaseapp.com",projectId:"sm-chat-da9f7",databaseURL:"https://sm-chat-da9f7-default-rtdb.asia-southeast1.firebasedatabase.app"};
 firebase.initializeApp(firebaseConfig);
 var db=firebase.database();
 var messagesRef=db.ref("smMessenger/messages/SM_ROOM");
-var currentUser='';
+var callRef=db.ref("sm_calls/current");
+var currentUser='',otherUser='',pc,localStream,timerInt,pendingImage=null,pendingVideo=null,pendingFile=null,pendingAudio=null,speakerOn=false,incomingData=null,replyData=null;
 
 function setUser(n){
-  currentUser=n;
+  currentUser=n; otherUser=n==='Sohel'?'Mou':'Sohel';
   localStorage.setItem('sm_user',n);
-  document.getElementById('header').innerText=n+' selected! Other: '+(n==='Sohel'?'Mou':'Sohel');
-  document.getElementById('status').innerText='Active now - '+n;
-  document.getElementById('status').style.color='lightgreen';
+  document.getElementById('headerName').innerText=otherUser+' ❤️';
+  document.getElementById('statusText').innerText='● Active now - '+n;
+  document.getElementById('statusText').style.color='lightgreen';
+  document.getElementById('whoamiBtn').innerText=n;
   document.getElementById('nameBox').style.display='none';
-  document.getElementById('debug').innerText='Selected: '+n+' at '+new Date().toLocaleTimeString();
-  alert(n+' selected! Ekhon msg pathao!');
+  db.ref('smMessenger/presence/'+n).set({online:true,lastSeen:firebase.database.ServerValue.TIMESTAMP});
   loadMessages();
 }
+var cu=localStorage.getItem('sm_user'); if(cu){ setTimeout(function(){ setUser(cu); },600); }
 
 function loadMessages(){
   messagesRef.on('value',function(snap){
-    var el=document.getElementById('messages');
-    el.innerHTML='';
+    if(!currentUser){document.getElementById('messages').innerHTML='<div class="text-center text-white/30 text-xs mt-20">Select Sohel or Mou to start chatting</div>'; return;}
+    var el=document.getElementById('messages'); el.innerHTML='';
     snap.forEach(function(child){
-      var d=child.val();
+      var d=child.val(); if(!d) return;
       var isMe=d.sender===currentUser;
-      var div=document.createElement('div');
-      div.style.cssText='margin:6px 0;padding:8px 12px;border-radius:12px;max-width:80%;'+(isMe?'background:#ff4d8d;margin-left:auto':'background:#2a2a4a');
-      div.innerText=d.sender+': '+(d.text||d.type);
-      el.appendChild(div);
+      var wrap=document.createElement('div'); wrap.className='msg-wrap flex '+(isMe?'justify-end':'justify-start')+' relative mb-1';
+      wrap.dataset.key=child.key;
+      var replyHtml='';
+      if(d.replyTo){ replyHtml='<div class="reply-preview"><p class="text-pink-300 font-bold text-[10px]">'+d.replyTo.sender+'</p><p class="truncate">'+(d.replyTo.text||'').substring(0,60)+'</p></div>'; }
+      var c='';
+      if(d.deleted) c='<div class="italic opacity-60 text-[13px]">🚫 Unsent</div>';
+      else if(d.type==='image') c='<img src="'+d.data+'" onclick="openLb(\''+d.data+'\',\'image\')" class="rounded-xl max-w-[230px] cursor-pointer">';
+      else if(d.type==='video') c='<video src="'+d.data+'" onclick="openLb(\''+d.data+'\',\'video\')" class="rounded-xl max-w-[230px] bg-black"></video>';
+      else if(d.type==='file') c='<a href="'+d.data+'" download="'+d.fileName+'" class="underline">📎 '+d.fileName+'</a>';
+      else if(d.type==='audio') c='<audio controls src="'+d.data+'" class="w-[200px]"></audio>';
+      else c='<div class="whitespace-pre-wrap break-words">'+(d.text||'')+'</div>';
+      wrap.innerHTML='<div class="reply-icon">↩️</div><div class="'+(isMe?'msg-me':'msg-other')+' px-4 py-2.5 max-w-[78%] text-white text-[14px] relative">'+replyHtml+c+'<div class="text-[9px] opacity-60 mt-1">'+(d.time||'')+'</div></div>';
+      el.appendChild(wrap);
+      // SWIPE TO REPLY
+      var startX=0,curX=0,swiping=false;
+      wrap.addEventListener('touchstart',function(e){ startX=e.touches[0].clientX; swiping=true; wrap.classList.add('swiping'); }, {passive:true});
+      wrap.addEventListener('touchmove',function(e){ if(!swiping) return; curX=e.touches[0].clientX-startX; if(curX>0&&curX<120){ wrap.style.transform='translateX('+curX+'px)'; var ic=wrap.querySelector('.reply-icon'); if(ic) ic.style.opacity=curX/60; } }, {passive:true});
+      wrap.addEventListener('touchend',function(){ wrap.classList.remove('swiping'); wrap.style.transform='translateX(0)'; var ic=wrap.querySelector('.reply-icon'); if(ic) ic.style.opacity=0; if(curX>60){ setReply(d.sender,d.text||d.fileName||d.type); } swiping=false; curX=0; });
+      wrap.addEventListener('dblclick',function(){ setReply(d.sender,d.text||d.fileName||d.type); });
+      // long press delete
+      var t; wrap.addEventListener('touchstart',function(){ t=setTimeout(function(){ if(confirm('Delete this message?')){ db.ref('smMessenger/messages/SM_ROOM/'+child.key).update({deleted:true}); } },900); }); wrap.addEventListener('touchend',function(){ clearTimeout(t); });
     });
     el.scrollTop=el.scrollHeight;
   });
 }
-
+function setReply(sender,text){ replyData={sender:sender,text:text}; document.getElementById('replyToName').innerText=sender; document.getElementById('replyToText').innerText=text.substring(0,60); document.getElementById('replyBox').classList.remove('hidden'); document.getElementById('msgInput').focus(); if(navigator.vibrate) navigator.vibrate(50); }
+function cancelReply(){ replyData=null; document.getElementById('replyBox').classList.add('hidden'); }
+function openLb(src,type){ var lb=document.getElementById('lightbox'); var i=document.getElementById('lbImg'); var v=document.getElementById('lbVideo'); lb.style.display='flex'; if(type==='video'){ v.src=src; v.style.display='block'; i.style.display='none'; v.play(); }else{ i.src=src; i.style.display='block'; v.style.display='none'; } }
 function sendMessage(){
   var text=document.getElementById('msgInput').value.trim();
-  if(!text){alert('Lekho');return;}
-  if(!currentUser){alert('Age I am Sohel / Mou select koro!');return;}
-  messagesRef.push({sender:currentUser,text:text,time:new Date().toLocaleTimeString(),createdAt:firebase.database.ServerValue.TIMESTAMP});
-  document.getElementById('msgInput').value='';
+  if(!text && !pendingImage && !pendingVideo && !pendingFile && !pendingAudio) return;
+  if(!currentUser){ alert('Age I am Sohel / Mou select koro!'); return; }
+  var obj={sender:currentUser,text:text,time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),createdAt:firebase.database.ServerValue.TIMESTAMP,readByOther:false,type:'text'};
+  if(replyData){ obj.replyTo={sender:replyData.sender,text:replyData.text}; }
+  if(pendingImage){obj.data=pendingImage; obj.type='image'; obj.text='';}
+  if(pendingVideo){obj.data=pendingVideo; obj.type='video'; obj.text='';}
+  if(pendingFile){obj.data=pendingFile.data; obj.fileName=pendingFile.name; obj.type='file'; obj.text='';}
+  if(pendingAudio){obj.data=pendingAudio; obj.type='audio'; obj.text='';}
+  document.getElementById('msgInput').value=''; cancelPreview(); cancelReply();
+  messagesRef.push(obj);
 }
+function cancelPreview(){pendingImage=null;pendingVideo=null;pendingFile=null;pendingAudio=null;document.getElementById('previewBox').classList.add('hidden');}
+function fileToDataURL(f){return new Promise(function(res){var r=new FileReader();r.onload=function(){res(r.result);};r.readAsDataURL(f);});}
+document.getElementById('imgInput').addEventListener('change',async function(e){var f=e.target.files[0];if(!f) return;var data=await fileToDataURL(f);if(f.type.startsWith('image/')){var img=new Image(); img.src=data; await new Promise(function(r){img.onload=r;}); var c=document.createElement('canvas'); var w=img.width,h=img.height; var max=800; if(w>max||h>max){if(w>h){h*=max/w;w=max;}else{w*=max/h;h=max;}} c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);data=c.toDataURL('image/jpeg',0.6);pendingImage=data;}else{pendingVideo=data;}document.getElementById('previewText').innerText='Ready to send';document.getElementById('previewBox').classList.remove('hidden');e.target.value='';});
+document.getElementById('fileInput').addEventListener('change',async function(e){var f=e.target.files[0];if(!f) return;var data=await fileToDataURL(f);pendingFile={data:data,name:f.name};document.getElementById('previewText').innerText=f.name;document.getElementById('previewBox').classList.remove('hidden');e.target.value='';});
+var mr,ac=[];document.getElementById('micBtn').addEventListener('click',async function(){var b=this; if(mr&&mr.state==='recording'){mr.stop(); b.innerText='🎙️'; return;} try{var s=await navigator.mediaDevices.getUserMedia({audio:true}); mr=new MediaRecorder(s); ac=[]; mr.ondataavailable=function(e){ac.push(e.data);}; mr.onstop=function(){var bl=new Blob(ac,{type:'audio/webm'}); var r=new FileReader(); r.onload=function(){pendingAudio=r.result; document.getElementById('previewText').innerText='Voice ready'; document.getElementById('previewBox').classList.remove('hidden');}; r.readAsDataURL(bl); s.getTracks().forEach(function(t){t.stop();});}; mr.start(); b.innerText='⏹️';}catch(e){alert('Mic allow koro');}});
+document.getElementById('msgInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+document.getElementById('whoamiBtn').addEventListener('click',function(){localStorage.removeItem('sm_user');location.reload();});
 
-var cu=localStorage.getItem('sm_user');
-if(cu){ setTimeout(function(){ setUser(cu); },800); }
-
-// Debug
-document.getElementById('debug').innerText='JS Loaded OK - '+new Date().toLocaleTimeString();
+// CALL - NO SOUND
+function createPC(){pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}); pc.onicecandidate=function(e){if(e.candidate) db.ref('sm_calls/candidates/'+currentUser).push(e.candidate.toJSON());}; pc.ontrack=function(e){var rv=document.getElementById('remoteVideo'); var ra=document.getElementById('remoteAudio'); if(e.track.kind==='video'){rv.srcObject=e.streams[0]; rv.classList.remove('hidden'); rv.play(); document.getElementById('callAvatar').classList.add('hidden'); document.getElementById('callStatusText').classList.add('hidden');} if(e.track.kind==='audio'){ra.srcObject=e.streams[0]; ra.play(); setSpeaker(false);}}; return pc;}
+function listenCan(other){db.ref('sm_calls/candidates/'+other).on('value',function(snap){snap.forEach(function(child){var c=child.val(); if(c&&pc) pc.addIceCandidate(new RTCIceCandidate(c)).catch(function(){});});});}
+function startTimer(){var s=0; timerInt=setInterval(function(){s++; var m=String(Math.floor(s/60)).padStart(2,'0'); var sec=String(s%60).padStart(2,'0'); document.getElementById('callTimer').innerText=m+':'+sec;},1000);}
+function setSpeaker(on){speakerOn=on; var ra=document.getElementById('remoteAudio'); ra.volume=on?1.0:0.28; var btn=document.getElementById('speakerBtn'); btn.querySelector('div').innerText=on?'🔊':'🔈'; btn.querySelector('span').innerText=on?'Speaker ON':'Earpiece'; btn.querySelector('div').style.background=on?'#2a7cff':'rgba(255,255,255,0.1)';}
+async function startCall(v){if(!currentUser){alert('Age select koro');return;} otherUser=currentUser==='Sohel'?'Mou':'Sohel'; document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callName').innerText=otherUser; document.getElementById('callTimer').innerText='Calling...'; try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:!!v});}catch(e){alert('Camera/Mic allow');return;} document.getElementById('localVideo').srcObject=localStream; document.getElementById('localVideo').classList.remove('hidden'); setSpeaker(false); var p1=createPC(); localStream.getTracks().forEach(function(t){p1.addTrack(t,localStream);}); var off=await p1.createOffer(); await p1.setLocalDescription(off); await callRef.set({offer:{type:off.type,sdp:off.sdp},caller:currentUser,callee:otherUser,type:v?'video':'voice',state:'calling'}); listenCan(otherUser);}
+async function acceptCall(){var d=incomingData; if(!d) return; document.getElementById('incomingBox').classList.add('hidden'); document.getElementById('callScreen').classList.remove('hidden'); document.getElementById('callName').innerText=d.caller; try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:d.type==='video'});}catch(e){return;} document.getElementById('localVideo').srcObject=localStream; if(d.type==='video') document.getElementById('localVideo').classList.remove('hidden'); setSpeaker(false); var p2=createPC(); localStream.getTracks().forEach(function(t){p2.addTrack(t,localStream);}); await p2.setRemoteDescription(new RTCSessionDescription(d.offer)); var ans=await p2.createAnswer(); await p2.setLocalDescription(ans); await db.ref('sm_calls/current/answer').set({type:ans.type,sdp:ans.sdp}); await db.ref('sm_calls/current/state').set('connected'); listenCan(d.caller); startTimer();}
+function endCall(){db.ref('sm_calls/candidates/'+currentUser).remove(); db.ref('sm_calls/candidates/'+otherUser).remove(); if(pc)pc.close(); pc=null; if(localStream)localStream.getTracks().forEach(function(t){t.stop();}); clearInterval(timerInt); document.getElementById('callScreen').classList.add('hidden'); document.getElementById('remoteVideo').srcObject=null; document.getElementById('remoteVideo').classList.add('hidden'); document.getElementById('remoteAudio').srcObject=null; document.getElementById('callAvatar').classList.remove('hidden'); document.getElementById('callStatusText').classList.remove('hidden'); callRef.remove();}
+function declineCall(){callRef.remove(); document.getElementById('incomingBox').classList.add('hidden');}
+callRef.on('value',async function(s){var d=s.val(); if(!d||!currentUser) return; if(d.state==='calling'&&d.callee===currentUser){incomingData=d; document.getElementById('incomingText').innerText=d.caller+' calling...'; document.getElementById('incomingBox').classList.remove('hidden');} if(d.answer&&d.caller===currentUser&&pc){try{await pc.setRemoteDescription(new RTCSessionDescription(d.answer));}catch(e){} startTimer();}});
+var localVideo=document.getElementById('localVideo'), callVideoArea=document.getElementById('callVideoArea'), isDragging=false, startX, startY, initLeft, initTop;
+function getPos(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};}
+function startDrag(e){if(localVideo.classList.contains('hidden')) return; isDragging=true; localVideo.classList.add('dragging'); var p=getPos(e); var r=localVideo.getBoundingClientRect(); var pr=callVideoArea.getBoundingClientRect(); startX=p.x; startY=p.y; initLeft=r.left-pr.left; initTop=r.top-pr.top; e.preventDefault();}
+function onDrag(e){if(!isDragging) return; var p=getPos(e); var nl=initLeft+(p.x-startX); var nt=initTop+(p.y-startY); var pr=callVideoArea.getBoundingClientRect(); var vr=localVideo.getBoundingClientRect(); nl=Math.max(0,Math.min(nl,pr.width-vr.width-8)); nt=Math.max(0,Math.min(nt,pr.height-vr.height-8)); localVideo.style.left=nl+'px'; localVideo.style.top=nt+'px'; localVideo.style.right='auto'; localVideo.style.bottom='auto'; e.preventDefault();}
+function endDrag(){isDragging=false; localVideo.classList.remove('dragging');}
+localVideo.addEventListener('mousedown',startDrag); localVideo.addEventListener('touchstart',startDrag,{passive:false});
+window.addEventListener('mousemove',onDrag); window.addEventListener('touchmove',onDrag,{passive:false});
+window.addEventListener('mouseup',endDrag); window.addEventListener('touchend',endDrag);
+document.getElementById('speakerBtn').addEventListener('click',function(){setSpeaker(!speakerOn);});
+document.getElementById('muteBtn').addEventListener('click',function(){if(localStream)localStream.getAudioTracks().forEach(function(t){t.enabled=!t.enabled;});});
 </script>
 </body>
 </html>
