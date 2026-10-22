@@ -2,19 +2,17 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Sohel ❤️ Mou - Zoom Pro</title>
+<title>Sohel ❤️ Mou - No Lock</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{font-family:sans-serif;overscroll-behavior:none}
+body{font-family:sans-serif}
 #messages::before{content:"";position:absolute;inset:0;background:url('bg.jpg') center/cover no-repeat;opacity:0.22;filter:blur(2px);z-index:-1}
 .msg-me{background:linear-gradient(135deg,#ff4d8d,#ff7eb3);border-radius:18px 18px 2px 18px}
 .msg-other{background:#2a2a4a;border-radius:18px 18px 18px 2px}
 .react-bar{position:absolute;bottom:-22px;right:6px;background:#1e1e32;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:3px 6px;display:flex;gap:4px;box-shadow:0 4px 12px rgba(0,0,0,0.5)}
-/* ZOOM LIGHTBOX */
 #lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:none;align-items:center;justify-content:center;touch-action:none}
 #lightbox img, #lightbox video{max-width:100%;max-height:100%;transform-origin:center center;transition:transform 0.15s ease;will-change:transform}
 #lightboxClose{position:absolute;top:16px;right:16px;width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;z-index:10000}
-#lightboxHint{position:absolute;bottom:24px;left:0;right:0;text-align:center;color:rgba(255,255,255,0.6);font-size:12px}
 .call-bg{background:#0f141a}
 .call-avatar{width:160px;height:160px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.15)}
 .call-btn{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px}
@@ -32,23 +30,17 @@ const app=initializeApp(firebaseConfig);const db=getDatabase(app);window.fb={ref
 <audio id="msgTone" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c7e8a2.mp3"></audio>
 <audio id="remoteAudio" autoplay playsinline></audio>
 
-<div id="lockScreen" class="fixed inset-0 bg-[#0a0a14] z-[999] flex flex-col items-center justify-center p-6">
-<div class="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center text-3xl">🔒</div>
-<h2 class="font-bold text-xl mt-4 text-white">Sohel ❤️ Mou</h2>
-<input id="passInput" type="password" placeholder="76435668" class="mt-6 w-full max-w-[300px] bg-[#1e1e32] border border-white/20 rounded-full px-6 py-3 text-center outline-none text-white">
-<button onclick="if(document.getElementById('passInput').value==='76435668'){document.getElementById('lockScreen').style.display='none';localStorage.setItem('sm_unlocked','yes')}" class="mt-3 w-full max-w-[300px] bg-gradient-to-br from-pink-500 to-violet-600 font-bold py-3 rounded-full text-white">Unlock</button>
-</div>
+<!-- PASSWORD OFF - LOCK REMOVED -->
 
-<!-- LIGHTBOX FOR ZOOM -->
 <div id="lightbox">
 <div id="lightboxClose" onclick="closeLightbox()">✕</div>
 <img id="lightboxImg" style="display:none">
 <video id="lightboxVideo" controls playsinline style="display:none"></video>
-<div id="lightboxHint">Pinch to zoom • Double tap to zoom • Drag to move</div>
+<div id="lightboxHint" style="position:absolute;bottom:24px;left:0;right:0;text-align:center;color:rgba(255,255,255,0.6);font-size:12px">Pinch to zoom • Double tap to zoom</div>
 </div>
 
 <header class="bg-[#1a1a2e] p-3 flex items-center justify-between border-b border-white/10 sticky top-0 z-20">
-<div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center font-bold text-white text-sm">SM</div><div><h1 id="headerName" class="text-white text-[15px] font-semibold">Select User</h1><p id="statusText" class="text-[11px] text-white/50">Tap</p></div></div>
+<div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center font-bold text-white text-sm">SM</div><div><h1 id="headerName" class="text-white text-[15px] font-semibold">Select User</h1><p id="statusText" class="text-[11px] text-white/50">Select koro</p></div></div>
 <div class="flex gap-2"><button id="voiceBtn" class="w-9 h-9 bg-white/10 rounded-full">📞</button><button id="videoBtn" class="w-9 h-9 bg-white/10 rounded-full">📹</button><button id="whoami" class="text-[10px] bg-white/10 px-2 py-1 rounded-full text-white/60"></button></div>
 </header>
 
@@ -97,75 +89,26 @@ const app=initializeApp(firebaseConfig);const db=getDatabase(app);window.fb={ref
 <script type="module">
 const messagesRef=fb.ref(db,"smMessenger/messages/SM_ROOM");const presenceRef=fb.ref(db,"smMessenger/presence");const callRef=fb.ref(db,"sm_calls/current");
 let currentUser='',otherUser='',pc,localStream,timerInt;let presenceData={};let pendingImage=null,pendingVideo=null,pendingFile=null,pendingAudio=null;let selectedKey=null,selectedIsMe=false;let speakerOn=false;
-
 function timeAgo(ts){if(!ts) return 'Offline';const d=Date.now()-ts;const m=Math.floor(d/60000);if(m<1) return 'Active now';if(m<60) return `Active ${m}m ago`;const h=Math.floor(m/60);if(h<24) return `Active ${h}h ago`;return `Active ${Math.floor(h/24)}d ago`;}
 function setUser(n){currentUser=n;otherUser=n==='Sohel'?'Mou':'Sohel';localStorage.setItem('sm_user',n);document.getElementById('whoami').textContent=n;document.getElementById('headerName').textContent=otherUser+' ❤️';document.getElementById('nameBox').style.display='none';const myRef=fb.ref(db,'smMessenger/presence/'+n);fb.set(myRef,{online:true,lastSeen:fb.serverTimestamp()});fb.onDisconnect(myRef).update({online:false,lastSeen:fb.serverTimestamp()});}
 let cu=localStorage.getItem('sm_user')||'';if(cu)setUser(cu);window.setUser=setUser;
-if(localStorage.getItem('sm_unlocked')==='yes')document.getElementById('lockScreen').style.display='none';
 fb.onValue(presenceRef,s=>{presenceData=s.val()||{};const o=presenceData[otherUser];const el=document.getElementById('statusText');if(o&&o.online){el.textContent='● Active now';el.className='text-[11px] text-green-400';}else if(o&&o.lastSeen){el.textContent='● '+timeAgo(o.lastSeen);el.className='text-[11px] text-white/50';}});
-
 const messagesEl=document.getElementById('messages');
-
-// --- LIGHTBOX ZOOM LOGIC ---
-let scale=1, lastScale=1, posX=0, posY=0, lastX=0, lastY=0, isDragging=false, startX=0, startY=0;
+let scale=1, posX=0, posY=0, isDragging=false, startX=0, startY=0;
 const lb=document.getElementById('lightbox'), lbImg=document.getElementById('lightboxImg'), lbVideo=document.getElementById('lightboxVideo');
-window.openLightbox=(src,type)=>{
- lb.style.display='flex';
- if(type==='video'){ lbVideo.src=src; lbVideo.style.display='block'; lbImg.style.display='none'; lbVideo.play(); }
- else{ lbImg.src=src; lbImg.style.display='block'; lbVideo.style.display='none'; }
- scale=1; posX=0; posY=0; updateTransform();
- document.getElementById('lightboxHint').style.display='block';
- setTimeout(()=>document.getElementById('lightboxHint').style.display='none',2500);
-};
-window.closeLightbox=()=>{
- lb.style.display='none'; lbImg.src=''; lbVideo.pause(); lbVideo.src=''; scale=1; posX=0; posY=0;
-};
-function updateTransform(){
- const el=lbImg.style.display!=='none'?lbImg:lbVideo;
- el.style.transform=`translate(${posX}px, ${posY}px) scale(${scale})`;
-}
-lb.addEventListener('click',e=>{ if(e.target===lb || e.target.id==='lightboxClose') closeLightbox(); });
-// Double tap zoom
-let lastTap=0;
-lb.addEventListener('touchend',e=>{
- const now=Date.now();
- if(now-lastTap<300){ scale=scale===1?2.5:1; posX=0; posY=0; updateTransform(); }
- lastTap=now;
-});
-// Pinch zoom
-lb.addEventListener('touchstart',e=>{
- if(e.touches.length===1){ isDragging=true; startX=e.touches[0].clientX - posX; startY=e.touches[0].clientY - posY; }
- if(e.touches.length===2){ const dx=e.touches[0].clientX-e.touches[1].clientX; const dy=e.touches[0].clientY-e.touches[1].clientY; lastScale=Math.hypot(dx,dy); }
-});
-lb.addEventListener('touchmove',e=>{
- e.preventDefault();
- if(e.touches.length===1 && isDragging && scale>1){ posX=e.touches[0].clientX - startX; posY=e.touches[0].clientY - startY; updateTransform(); }
- if(e.touches.length===2){ const dx=e.touches[0].clientX-e.touches[1].clientX; const dy=e.touches[0].clientY-e.touches[1].clientY; const dist=Math.hypot(dx,dy); const newScale=Math.min(Math.max(1, scale * (dist/lastScale)),4); scale=newScale; updateTransform(); }
-},{passive:false});
-lb.addEventListener('touchend',()=>{ isDragging=false; lastX=posX; lastY=posY; if(scale<=1){ posX=0; posY=0; updateTransform(); } });
+window.openLightbox=(src,type)=>{ lb.style.display='flex'; if(type==='video'){ lbVideo.src=src; lbVideo.style.display='block'; lbImg.style.display='none'; lbVideo.play(); } else{ lbImg.src=src; lbImg.style.display='block'; lbVideo.style.display='none'; } scale=1; posX=0; posY=0; updateTransform(); };
+window.closeLightbox=()=>{ lb.style.display='none'; lbImg.src=''; lbVideo.pause(); lbVideo.src=''; scale=1; posX=0; posY=0; };
+function updateTransform(){ const el=lbImg.style.display!=='none'?lbImg:lbVideo; el.style.transform=`translate(${posX}px, ${posY}px) scale(${scale})`; }
+lb.addEventListener('click',e=>{ if(e.target===lb) closeLightbox(); });
+let lastTap=0; lb.addEventListener('touchend',e=>{ const now=Date.now(); if(now-lastTap<300){ scale=scale===1?2.5:1; posX=0; posY=0; updateTransform(); } lastTap=now; });
+lb.addEventListener('touchstart',e=>{ if(e.touches.length===1){ isDragging=true; startX=e.touches[0].clientX - posX; startY=e.touches[0].clientY - posY; } });
+lb.addEventListener('touchmove',e=>{ e.preventDefault(); if(e.touches.length===1 && isDragging && scale>1){ posX=e.touches[0].clientX - startX; posY=e.touches[0].clientY - startY; updateTransform(); } if(e.touches.length===2){ const dx=e.touches[0].clientX-e.touches[1].clientX; const dy=e.touches[0].clientY-e.touches[1].clientY; const dist=Math.hypot(dx,dy); scale=Math.min(Math.max(1, scale * 0.01 + 1),4); updateTransform(); } },{passive:false});
+lb.addEventListener('touchend',()=>{ isDragging=false; if(scale<=1){ posX=0; posY=0; updateTransform(); } });
 
-function render(child){
- const d=child.val(); if(!d) return null; if(localStorage.getItem('deleted_me_'+child.key)) return null;
- const isMe=d.sender===currentUser;
- const div=document.createElement('div'); div.className=`flex ${isMe?'justify-end':'justify-start'} relative`; div.id='msg-'+child.key;
- let c='';
- if(d.deleted){c=`<div class="italic opacity-60 text-[13px]">🚫 ${d.deletedBy} unsent a message</div>`;}
- else if(d.type==='image') c=`<img src="${d.data}" onclick="openLightbox('${d.data}','image')" class="rounded-xl max-w-[230px] cursor-zoom-in active:scale-95 transition">`;
- else if(d.type==='video') c=`<video src="${d.data}" onclick="openLightbox('${d.data}','video')" class="rounded-xl max-w-[240px] max-h-[300px] bg-black cursor-zoom-in" poster="" ></video><div class="absolute inset-0 flex items-center justify-center pointer-events-none"><div class="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white">▶️</div></div>`;
- else if(d.type==='file') c=`<a href="${d.data}" download="${d.fileName}" class="underline">📎 ${d.fileName}</a>`;
- else if(d.type==='audio') c=`<div class="flex items-center gap-2 min-w-[180px]"><button class="aplay w-8 h-8 bg-white/20 rounded-full flex items-center justify-center" data-key="${child.key}">▶️</button><div class="h-1 flex-1 bg-white/20 rounded-full"></div><audio id="aud-${child.key}" src="${d.data}"></audio></div>`;
- else c=`<div class="whitespace-pre-wrap break-words">${d.text||''}</div>`;
- let reactHtml=''; if(d.reacts){ const emojis=Object.values(d.reacts).join(''); reactHtml=`<div class="react-bar text-[12px]">${emojis}</div>`; }
- div.innerHTML=`<div class="${isMe?'msg-me':'msg-other'} px-4 py-2.5 max-w-[78%] text-white text-[14px] relative">${c}${reactHtml}<div class="text-[9px] opacity-60 mt-1 flex justify-between gap-3"><span>${d.time||''}</span><span>${d.deleted?'':isMe?(d.readByOther?'✓✓ Seen':'✓✓ Delivered'):d.sender}</span></div></div>`;
- const show=(e)=>{ selectedKey=child.key; selectedIsMe=isMe; const m=document.getElementById('contextMenu'); m.innerHTML=`<div class="flex justify-around p-2 border-b border-white/10 text-xl"><button onclick="addReact('❤️')">❤️</button><button onclick="addReact('😂')">😂</button><button onclick="addReact('😮')">😮</button><button onclick="addReact('😢')">😢</button><button onclick="addReact('😡')">😡</button><button onclick="addReact('👍')">👍</button></div>${d.deleted?`<button onclick="menuAction('me')" class="w-full text-left px-4 py-2.5 text-[13px]">🗑️ Delete for me</button>`:isMe?`<button onclick="menuAction('everyone')" class="w-full text-left px-4 py-2.5 text-[13px]">🚫 Unsend for Everyone</button><button onclick="menuAction('me')" class="w-full text-left px-4 py-2.5 text-[13px]">🗑️ Delete for me only</button>`:`<button onclick="menuAction('me')" class="w-full text-left px-4 py-2.5 text-[13px]">🗑️ Delete for me only</button>`}`; m.style.left=(e.pageX||30)+'px'; m.style.top=(e.pageY||80)+'px'; m.classList.remove('hidden'); };
- div.oncontextmenu=e=>{e.preventDefault();show(e);}; let t; div.addEventListener('touchstart',e=>{t=setTimeout(()=>show(e.touches[0]),650);}); div.addEventListener('touchend',()=>clearTimeout(t));
- div.querySelectorAll('.aplay').forEach(b=>{b.onclick=()=>{const aud=document.getElementById('aud-'+b.dataset.key);if(aud.paused){aud.play();b.textContent='⏸️';}else{aud.pause();b.textContent='▶️';} aud.onended=()=>b.textContent='▶️';};});
- return div;
-}
+function render(child){ const d=child.val(); if(!d) return null; if(localStorage.getItem('deleted_me_'+child.key)) return null; const isMe=d.sender===currentUser; const div=document.createElement('div'); div.className=`flex ${isMe?'justify-end':'justify-start'} relative`; div.id='msg-'+child.key; let c=''; if(d.deleted){c=`<div class="italic opacity-60 text-[13px]">🚫 ${d.deletedBy} unsent a message</div>`;} else if(d.type==='image') c=`<img src="${d.data}" onclick="openLightbox('${d.data}','image')" class="rounded-xl max-w-[230px] cursor-zoom-in">`; else if(d.type==='video') c=`<video src="${d.data}" onclick="openLightbox('${d.data}','video')" class="rounded-xl max-w-[240px] max-h-[300px] bg-black"></video>`; else if(d.type==='file') c=`<a href="${d.data}" download="${d.fileName}" class="underline">📎 ${d.fileName}</a>`; else if(d.type==='audio') c=`<div class="flex items-center gap-2 min-w-[180px]"><button class="aplay w-8 h-8 bg-white/20 rounded-full flex items-center justify-center" data-key="${child.key}">▶️</button><audio id="aud-${child.key}" src="${d.data}"></audio><span class="text-xs">Voice</span></div>`; else c=`<div class="whitespace-pre-wrap break-words">${d.text||''}</div>`; let reactHtml=''; if(d.reacts){ const emojis=Object.values(d.reacts).join(''); reactHtml=`<div class="react-bar text-[12px]">${emojis}</div>`; } div.innerHTML=`<div class="${isMe?'msg-me':'msg-other'} px-4 py-2.5 max-w-[78%] text-white text-[14px] relative">${c}${reactHtml}<div class="text-[9px] opacity-60 mt-1 flex justify-between gap-3"><span>${d.time||''}</span><span>${d.deleted?'':isMe?(d.readByOther?'✓✓ Seen':'✓✓ Delivered'):d.sender}</span></div></div>`; const show=(e)=>{ selectedKey=child.key; selectedIsMe=isMe; const m=document.getElementById('contextMenu'); m.innerHTML=`<div class="flex justify-around p-2 border-b border-white/10 text-xl"><button onclick="addReact('❤️')">❤️</button><button onclick="addReact('😂')">😂</button><button onclick="addReact('😮')">😮</button><button onclick="addReact('😢')">😢</button><button onclick="addReact('😡')">😡</button><button onclick="addReact('👍')">👍</button></div>${d.deleted?`<button onclick="menuAction('me')" class="w-full text-left px-4 py-2.5 text-[13px]">🗑️ Delete for me</button>`:isMe?`<button onclick="menuAction('everyone')" class="w-full text-left px-4 py-2.5 text-[13px]">🚫 Unsend for Everyone</button><button onclick="menuAction('me')" class="w-full text-left px-4 py-2.5 text-[13px]">🗑️ Delete for me only</button>`:`<button onclick="menuAction('me')" class="w-full text-left px-4 py-2.5 text-[13px]">🗑️ Delete for me only</button>`}`; m.style.left=(e.pageX||30)+'px'; m.style.top=(e.pageY||80)+'px'; m.classList.remove('hidden'); }; div.oncontextmenu=e=>{e.preventDefault();show(e);}; let t; div.addEventListener('touchstart',e=>{t=setTimeout(()=>show(e.touches[0]),650);}); div.addEventListener('touchend',()=>clearTimeout(t)); div.querySelectorAll('.aplay').forEach(b=>{b.onclick=()=>{const aud=document.getElementById('aud-'+b.dataset.key);if(aud.paused){aud.play();b.textContent='⏸️';}else{aud.pause();b.textContent='▶️';} aud.onended=()=>b.textContent='▶️';};}); return div;}
 fb.onValue(messagesRef,snap=>{ messagesEl.innerHTML=''; snap.forEach(child=>{const el=render(child); if(el) messagesEl.appendChild(el); const d=child.val(); if(d.sender!==currentUser && !d.readByOther && !d.deleted){ fb.update(fb.ref(db,'smMessenger/messages/SM_ROOM/'+child.key),{readByOther:true}); document.getElementById('msgTone').play().catch(()=>{}); }}); messagesEl.scrollTop=messagesEl.scrollHeight; });
 window.addReact=async emoji=>{ document.getElementById('contextMenu').classList.add('hidden'); if(!selectedKey) return; const r=fb.ref(db,'smMessenger/messages/SM_ROOM/'+selectedKey+'/reacts/'+currentUser); const snap=await new Promise(res=>fb.onValue(r,s=>res(s),{onlyOnce:true})); if(snap.val()===emoji) fb.remove(r); else fb.set(r,emoji); };
 window.menuAction=async type=>{ document.getElementById('contextMenu').classList.add('hidden'); if(!selectedKey) return; if(type==='me'){localStorage.setItem('deleted_me_'+selectedKey,'1'); const el=document.getElementById('msg-'+selectedKey); if(el) el.remove();} if(type==='everyone'){if(!selectedIsMe) return; await fb.update(fb.ref(db,'smMessenger/messages/SM_ROOM/'+selectedKey),{deleted:true,deletedBy:currentUser});} };
-
 async function sendMessage(extra={}){ let text=document.getElementById('msgInput').value.trim(); if(!text && !extra.data && !pendingImage && !pendingVideo && !pendingFile && !pendingAudio) return; if(!currentUser){alert('Select user'); return;} let obj={sender:currentUser,text,createdAt:fb.serverTimestamp(),time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),type:'text',readByOther:false,...extra}; if(pendingImage){obj={...obj,data:pendingImage,[STRIPPED] if(pendingVideo){obj={...obj,data:pendingVideo,[STRIPPED] if(pendingFile){obj={...obj,data:pendingFile.data,[STRIPPED] if(pendingAudio){obj={...obj,data:pendingAudio,[STRIPPED] document.getElementById('msgInput').value=''; cancelPreview(); await fb.push(messagesRef,obj); }
 document.getElementById('sendBtn').onclick=()=>sendMessage(); document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
 window.cancelPreview=()=>{pendingImage=null;pendingVideo=null;pendingFile=null;pendingAudio=null;document.getElementById('previewBox').classList.add('hidden');};
@@ -174,7 +117,6 @@ document.getElementById('imgInput').onchange=async e=>{const f=e.target.files[0]
 document.getElementById('fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;const data=await fileToDataURL(f);if(data.length>2.2*1024*1024){alert('File 2MB max');return;}pendingFile={data,name:f.name};document.getElementById('previewText').textContent='📎 '+f.name;document.getElementById('previewBox').classList.remove('hidden');e.target.value='';};
 let mr,ac=[];document.getElementById('micBtn').onclick=async()=>{const b=document.getElementById('micBtn');if(mr&&mr.state==='recording'){mr.stop();b.textContent='🎙️';b.classList.remove('bg-red-600');return;}try{const s=await navigator.mediaDevices.getUserMedia({audio:true});mr=new MediaRecorder(s);ac=[];mr.ondataavailable=e=>ac.push(e.data);mr.onstop=()=>{const bl=new Blob(ac,{type:'audio/webm'});const r=new FileReader();r.onload=()=>{pendingAudio=r.result;document.getElementById('previewText').textContent='🎤 Voice ready';document.getElementById('previewBox').classList.remove('hidden');};r.readAsDataURL(bl);s.getTracks().forEach(t=>t.stop());};mr.start();b.textContent='⏹️';b.classList.add('bg-red-600');document.getElementById('previewText').textContent='🔴 Recording...';document.getElementById('previewBox').classList.remove('hidden');}catch{alert('Mic allow');}};
 
-// CALL FIXED
 function createPC(){ pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}); pc.onicecandidate=e=>{if(e.candidate)fb.push(fb.ref(db,'sm_calls/candidates/'+currentUser),e.candidate.toJSON());}; pc.ontrack=e=>{ const rv=document.getElementById('remoteVideo'); const ra=document.getElementById('remoteAudio'); if(e.track.kind==='video'){ rv.srcObject=e.streams[0]; rv.classList.remove('hidden'); rv.play().catch(()=>{});} if(e.track.kind==='audio'){ ra.srcObject=e.streams[0]; ra.play().catch(()=>{});} }; return pc;}
 function listenCandidates(other){ const refOther=fb.ref(db,'sm_calls/candidates/'+other); fb.onValue(refOther,snap=>{ snap.forEach(child=>{const c=child.val(); if(c&&pc) pc.addIceCandidate(new RTCIceCandidate(c)).catch(()=>{}); }); });}
 function startTimer(){let s=0;timerInt=setInterval(()=>{s++;const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');document.getElementById('callTimer').textContent=m+':'+sec;document.getElementById('callStatusText').textContent=m+':'+sec;},1000);}
@@ -184,7 +126,7 @@ function endCall(){ fb.remove(fb.ref(db,'sm_calls/candidates/'+currentUser)); fb
 fb.onValue(callRef,async s=>{ const d=s.val(); if(!d||!currentUser) return; if(d.state==='calling'&&d.callee===currentUser){document.getElementById('incomingText').textContent=d.caller+' calling...';document.getElementById('incomingBox').classList.remove('hidden');window._in=d;document.getElementById('ringTone').play().catch(()=>{});} if(d.answer&&d.caller===currentUser&&pc){try{await pc.setRemoteDescription(new RTCSessionDescription(d.answer));}catch{} document.getElementById('callName').textContent=d.callee; document.getElementById('callStatusText').textContent='Connected'; document.getElementById('callTone').pause(); document.getElementById('ringTone').pause(); startTimer();}});
 document.getElementById('voiceBtn').onclick=()=>startCall(false); document.getElementById('videoBtn').onclick=()=>startCall(true); document.getElementById('acceptBtn').onclick=()=>{if(window._in)acceptCall(window._in);}; document.getElementById('declineBtn').onclick=()=>{document.getElementById('ringTone').pause();document.getElementById('callTone').pause();fb.remove(callRef);document.getElementById('incomingBox').classList.add('hidden');}; document.getElementById('endBtn').onclick=endCall;
 document.getElementById('muteBtn').onclick=e=>{if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);};
-document.getElementById('speakerBtn').onclick=()=>{ speakerOn=!speakerOn; const btn=document.getElementById('speakerBtn').querySelector('div'); btn.style.background=speakerOn?'#2a7cff':'rgba(255,255,255,0.1)'; document.getElementById('remoteAudio').volume=1; };
+document.getElementById('speakerBtn').onclick=()=>{ speakerOn=!speakerOn; const btn=document.getElementById('speakerBtn').querySelector('div'); btn.style.background=speakerOn?'#2a7cff':'rgba(255,255,255,0.1)'; };
 document.getElementById('whoami').onclick=()=>{localStorage.removeItem('sm_user');location.reload();};
 document.addEventListener('click',()=>document.getElementById('contextMenu').classList.add('hidden'));
 </script>
