@@ -9,7 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
 :root{--blue:#0866ff;--blue2:#1877f2;--bg:#f0f2f5;--panel:#fff;--text:#17202a;--muted:#687787;--line:#e5eaf0;--bubble:#e7f3ff;--green:#31a24c}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}button,input,textarea{font:inherit}button{cursor:pointer;border:0}.app{height:100dvh;max-width:1180px;margin:auto;background:var(--panel);display:flex;overflow:hidden;box-shadow:0 0 30px #1b35550c}.sidebar{width:350px;min-width:290px;border-right:1px solid var(--line);display:flex;flex-direction:column}.top{padding:18px 16px 12px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:25px;font-weight:800;letter-spacing:-.7px;color:var(--blue)}.round{width:38px;height:38px;border-radius:50%;background:#eef3fa;color:var(--blue);font-size:19px;display:inline-flex;align-items:center;justify-content:center}.search{margin:0 14px 12px;background:#f0f2f5;border-radius:24px;display:flex;align-items:center;padding:0 13px;gap:8px}.search input{width:100%;border:0;outline:0;background:transparent;padding:11px 0}.me{display:flex;gap:11px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#5ca8ff,#8759ed);display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;flex-shrink:0;position:relative}.online-dot{position:absolute;right:0;bottom:0;width:12px;height:12px;border:2px solid white;border-radius:50%;background:#31a24c}.muted{color:var(--muted);font-size:13px}.section{padding:12px 16px 6px;font-size:14px;font-weight:700;color:#5e6a78}.contact{display:flex;align-items:center;gap:11px;padding:11px 15px;cursor:pointer}.contact:hover,.contact.active{background:#edf4ff}.contact .meta{min-width:0;flex:1}.contact .name{font-weight:700}.contact .preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.badge{border-radius:12px;background:var(--blue);color:white;padding:2px 7px;font-size:11px}.sidebar-foot{margin-top:auto;padding:12px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.main{flex:1;display:flex;flex-direction:column;min-width:0}.chat-head{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 18px}.chat-head .person{flex:1;min-width:0}.chat-head .name{font-size:17px;font-weight:750}.actions{display:flex;gap:8px}.chat-body{flex:1;overflow:auto;padding:20px 22px;background:linear-gradient(#fff,#fbfcff);display:flex;flex-direction:column;gap:8px}.welcome{margin:auto;text-align:center;color:var(--muted);max-width:300px}.welcome .big{font-size:54px}.date-pill{align-self:center;background:#f1f4f8;border-radius:18px;padding:5px 12px;font-size:11px;color:var(--muted);margin:8px}.msg-row{display:flex;align-items:flex-end;gap:7px;max-width:85%}.msg-row.mine{align-self:flex-end;flex-direction:row-reverse}.mini-avatar{width:25px;height:25px;border-radius:50%;background:#8c79df;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}.bubble{padding:10px 13px;border-radius:18px;background:#f0f2f5;overflow-wrap:anywhere;line-height:1.4;white-space:pre-wrap;max-width:100%}.mine .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:5px}.msg-row:not(.mine) .bubble{border-bottom-left-radius:5px}.bubble img,.bubble video{display:block;max-width:min(290px,60vw);max-height:280px;border-radius:12px;margin-bottom:4px}.file-link{color:inherit;text-decoration:underline}.msg-foot{font-size:10px;color:var(--muted);padding:0 6px}.mine .msg-foot{text-align:right}.composer-wrap{padding:10px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:white}.replybar{display:none;padding:7px 10px;background:#f0f5ff;border-left:3px solid var(--blue);font-size:12px;margin-bottom:8px;border-radius:5px}.composer{display:flex;align-items:flex-end;gap:8px}.tools{display:flex;gap:4px;align-items:center}.tool{width:36px;height:38px;border-radius:50%;background:transparent;color:var(--blue);font-size:21px}.tool:hover{background:#edf4ff}.textwrap{flex:1;display:flex;align-items:flex-end;background:#f0f2f5;border-radius:22px;padding:3px 12px;min-width:0}.textwrap textarea{resize:none;border:0;outline:0;background:transparent;width:100%;max-height:120px;padding:8px 0;line-height:1.4}.send{width:39px;height:39px;border-radius:50%;background:var(--blue);color:white;font-size:19px;flex-shrink:0}.hint{text-align:center;font-size:10px;color:#8995a3;margin-top:7px}.typing{font-size:12px;color:var(--muted);min-height:17px;padding:0 24px 4px}.mobile-back{display:none}.modal{position:fixed;inset:0;background:#10182888;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.modal.show{display:flex}.modal-card{background:white;border-radius:20px;padding:22px;width:min(390px,100%);box-shadow:0 20px 60px #0003}.modal-card h2{margin:0 0 8px}.modal-card p{color:var(--muted);font-size:14px;line-height:1.5}.field{width:100%;padding:12px;border:1px solid #d7deea;border-radius:10px;margin:7px 0 12px}.primary{background:var(--blue);color:white;border-radius:10px;padding:11px 16px;font-weight:700}.secondary{background:#eef3fa;color:#334155;border-radius:10px;padding:11px 16px;font-weight:650}.rowbtn{display:flex;gap:8px;justify-content:flex-end}.call-banner{display:none;background:#eaf3ff;padding:10px 14px;align-items:center;justify-content:space-between;gap:10px}.call-banner.show{display:flex}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#17202a;color:#fff;padding:10px 16px;border-radius:22px;font-size:13px;display:none;z-index:30;max-width:90%;text-align:center}.toast.show{display:block}.empty{padding:30px 20px;text-align:center;color:var(--muted);font-size:14px}.status{display:inline-block;width:8px;height:8px;border-radius:50%;background:#aab4c0;margin-right:5px}.status.on{background:var(--green)}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}button,input,textarea{font:inherit}button{cursor:pointer;border:0}.app{height:100dvh;max-width:1180px;margin:auto;background:var(--panel);display:flex;overflow:hidden;box-shadow:0 0 30px #1b35550c}.sidebar{width:350px;min-width:290px;border-right:1px solid var(--line);display:flex;flex-direction:column}.top{padding:18px 16px 12px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:25px;font-weight:800;letter-spacing:-.7px;color:var(--blue)}.round{width:38px;height:38px;border-radius:50%;background:#eef3fa;color:var(--blue);font-size:19px;display:inline-flex;align-items:center;justify-content:center}.search{margin:0 14px 12px;background:#f0f2f5;border-radius:24px;display:flex;align-items:center;padding:0 13px;gap:8px}.search input{width:100%;border:0;outline:0;background:transparent;padding:11px 0}.me{display:flex;gap:11px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#5ca8ff,#8759ed);display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;flex-shrink:0;position:relative}.online-dot{position:absolute;right:0;bottom:0;width:12px;height:12px;border:2px solid white;border-radius:50%;background:#31a24c}.muted{color:var(--muted);font-size:13px}.section{padding:12px 16px 6px;font-size:14px;font-weight:700;color:#5e6a78}.contact{display:flex;align-items:center;gap:11px;padding:11px 15px;cursor:pointer}.contact:hover,.contact.active{background:#edf4ff}.contact .meta{min-width:0;flex:1}.contact .name{font-weight:700}.contact .preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.badge{border-radius:12px;background:var(--blue);color:white;padding:2px 7px;font-size:11px}.sidebar-foot{margin-top:auto;padding:12px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.main{flex:1;display:flex;flex-direction:column;min-width:0}.chat-head{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 18px}.chat-head .person{flex:1;min-width:0}.chat-head .name{font-size:17px;font-weight:750}.actions{display:flex;gap:8px}.call-action{width:40px;height:40px;border-radius:50%;background:#eaf3ff;color:#0866ff;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 3px #102a430f;transition:background .15s,transform .15s}.call-action:hover{background:#d9eaff;transform:scale(1.04)}.call-action svg{width:21px;height:21px;display:block}.call-action.video{color:#0866ff}.call-action.voice{background:#e8f8ee}.call-action.video{background:#eaf3ff}.call-action:focus-visible{outline:3px solid #8bb8ff;outline-offset:2px}.call-media{display:none;width:100%;max-height:240px;background:#101828;object-fit:contain;border-radius:12px}.call-media.show{display:block}.call-audio{display:none}.call-action.voice{color:#16803c}@media(max-width:700px){.call-action{width:36px;height:36px}.call-action svg{width:19px;height:19px}}.chat-body{flex:1;overflow:auto;padding:20px 22px;background:linear-gradient(#fff,#fbfcff);display:flex;flex-direction:column;gap:8px}.welcome{margin:auto;text-align:center;color:var(--muted);max-width:300px}.welcome .big{font-size:54px}.date-pill{align-self:center;background:#f1f4f8;border-radius:18px;padding:5px 12px;font-size:11px;color:var(--muted);margin:8px}.msg-row{display:flex;align-items:flex-end;gap:7px;max-width:85%}.msg-row.mine{align-self:flex-end;flex-direction:row-reverse}.mini-avatar{width:25px;height:25px;border-radius:50%;background:#8c79df;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}.bubble{padding:10px 13px;border-radius:18px;background:#f0f2f5;overflow-wrap:anywhere;line-height:1.4;white-space:pre-wrap;max-width:100%}.mine .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:5px}.msg-row:not(.mine) .bubble{border-bottom-left-radius:5px}.bubble img,.bubble video{display:block;max-width:min(290px,60vw);max-height:280px;border-radius:12px;margin-bottom:4px}.file-link{color:inherit;text-decoration:underline}.msg-foot{font-size:10px;color:var(--muted);padding:0 6px}.mine .msg-foot{text-align:right}.composer-wrap{padding:10px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:white}.replybar{display:none;padding:7px 10px;background:#f0f5ff;border-left:3px solid var(--blue);font-size:12px;margin-bottom:8px;border-radius:5px}.composer{display:flex;align-items:flex-end;gap:8px}.tools{display:flex;gap:4px;align-items:center}.tool{width:36px;height:38px;border-radius:50%;background:transparent;color:var(--blue);font-size:21px}.tool:hover{background:#edf4ff}.textwrap{flex:1;display:flex;align-items:flex-end;background:#f0f2f5;border-radius:22px;padding:3px 12px;min-width:0}.textwrap textarea{resize:none;border:0;outline:0;background:transparent;width:100%;max-height:120px;padding:8px 0;line-height:1.4}.send{width:39px;height:39px;border-radius:50%;background:var(--blue);color:white;font-size:19px;flex-shrink:0}.hint{text-align:center;font-size:10px;color:#8995a3;margin-top:7px}.typing{font-size:12px;color:var(--muted);min-height:17px;padding:0 24px 4px}.mobile-back{display:none}.modal{position:fixed;inset:0;background:#10182888;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.modal.show{display:flex}.modal-card{background:white;border-radius:20px;padding:22px;width:min(390px,100%);box-shadow:0 20px 60px #0003}.modal-card h2{margin:0 0 8px}.modal-card p{color:var(--muted);font-size:14px;line-height:1.5}.field{width:100%;padding:12px;border:1px solid #d7deea;border-radius:10px;margin:7px 0 12px}.primary{background:var(--blue);color:white;border-radius:10px;padding:11px 16px;font-weight:700}.secondary{background:#eef3fa;color:#334155;border-radius:10px;padding:11px 16px;font-weight:650}.rowbtn{display:flex;gap:8px;justify-content:flex-end}.call-banner{display:none;background:#eaf3ff;padding:10px 14px;align-items:center;justify-content:space-between;gap:10px}.call-banner.show{display:flex}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#17202a;color:#fff;padding:10px 16px;border-radius:22px;font-size:13px;display:none;z-index:30;max-width:90%;text-align:center}.toast.show{display:block}.empty{padding:30px 20px;text-align:center;color:var(--muted);font-size:14px}.status{display:inline-block;width:8px;height:8px;border-radius:50%;background:#aab4c0;margin-right:5px}.status.on{background:var(--green)}
 @media(max-width:700px){.app{height:100dvh}.sidebar{width:100%;min-width:0;border:0}.main{display:none;width:100%}.app.chat-open .sidebar{display:none}.app.chat-open .main{display:flex}.top{padding-top:calc(12px + env(safe-area-inset-top))}.chat-head{height:68px;padding:10px 12px}.mobile-back{display:inline-flex}.chat-body{padding:14px 11px}.msg-row{max-width:92%}.composer-wrap{padding-left:8px;padding-right:8px}.tools{gap:0}.tool{width:31px;font-size:19px}.textwrap{padding:2px 10px}.brand{font-size:23px}.sidebar-foot{padding-bottom:calc(12px + env(safe-area-inset-bottom))}}
 </style>
 </head>
@@ -31,9 +31,9 @@
    <button class="round mobile-back" id="backBtn">‹</button>
    <div class="avatar" id="chatAvatar">M<span class="online-dot" id="chatOnline"></span></div>
    <div class="person"><div class="name" id="chatName">Mou ❤️</div><div class="muted" id="chatStatus"><span class="status"></span>Checking status…</div></div>
-   <div class="actions"><button class="round" id="voiceCall" title="Voice call">☎</button><button class="round" id="videoCall" title="Video call">▣</button><button class="round" id="chatMenu" title="Chat options">⋯</button></div>
+   <div class="actions"><button class="call-action voice" id="voiceCall" title="Audio call" aria-label="Start audio call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.63 2.62a2 2 0 0 1-.45 2.11L8.02 9.72a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.84.3 1.72.51 2.62.63A2 2 0 0 1 22 16.92z"/></svg></button><button class="call-action video" id="videoCall" title="Video call" aria-label="Start video call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="m15 10 6-3v10l-6-3z"/></svg></button><button class="round" id="chatMenu" title="Chat options" aria-label="Chat options">⋯</button></div>
   </header>
-  <div class="call-banner" id="callBanner"><span id="callText">Calling…</span><div class="actions"><button class="primary" id="acceptCall" style="display:none">Accept</button><button class="secondary" id="declineCall">Decline</button></div></div>
+  <div class="call-banner" id="callBanner"><span id="callText">Calling…</span><div class="actions"><button class="primary" id="acceptCall" style="display:none">Accept</button><button class="secondary" id="declineCall">End call</button></div></div><video class="call-media" id="remoteVideo" autoplay playsinline></video><audio class="call-audio" id="remoteAudio" autoplay></audio>
   <section class="chat-body" id="messages"><div class="welcome"><div class="big">💙</div><h3>Sohel ❤️ Mou</h3><p>Your little corner of the world. Send a message to start chatting.</p></div></section>
   <div class="typing" id="typingLine"></div>
   <div class="composer-wrap">
@@ -97,12 +97,43 @@
     if(!db)return;
     db.ref("smMessenger/typing/"+roomKey()+"/"+otherUser()).on("value",s=>{$("typingLine").textContent=s.val()?otherUser()+" is typing…":""});
   }
+  const MESSAGE_TTL_MS = 24 * 60 * 60 * 1000;
+  let expiryCleanupBusy = false;
+  async function cleanupExpiredMessages(){
+    if(!db || expiryCleanupBusy)return;
+    expiryCleanupBusy = true;
+    try{
+      const ref = db.ref("smMessenger/messages/"+roomKey());
+      const snap = await ref.once("value");
+      const cutoff = Date.now() - MESSAGE_TTL_MS;
+      const removals = [];
+      snap.forEach(child=>{
+        const msg = child.val() || {};
+        const created = Number(msg.createdAt);
+        if(Number.isFinite(created) && created > 0 && created <= cutoff){
+          removals.push(ref.child(child.key).remove());
+        }
+      });
+      if(removals.length) await Promise.all(removals);
+    }catch(e){console.warn("24-hour cleanup needs Firebase read/write permission:",e)}
+    finally{expiryCleanupBusy = false}
+  }
   function bindMessages(){
     if(!db){toast("Firebase configuration needed.");return}
     if(messagesRef&&messagesListener)messagesRef.off("value",messagesListener);
+    // Remove expired text and attachments when the chat is opened / updated.
+    cleanupExpiredMessages();
     messagesRef=db.ref("smMessenger/messages/"+roomKey()).limitToLast(300);
     messagesListener=messagesRef.on("value",snap=>{
-      currentMessages=[];snap.forEach(c=>currentMessages.push({id:c.key,...c.val()}));
+      currentMessages=[];
+      const cutoff = Date.now() - MESSAGE_TTL_MS;
+      snap.forEach(c=>{
+        const msg = c.val() || {};
+        const created = Number(msg.createdAt);
+        if(Number.isFinite(created) && created > 0 && created <= cutoff){
+          db.ref("smMessenger/messages/"+roomKey()+"/"+c.key).remove().catch(()=>{});
+        }else currentMessages.push({id:c.key,...msg});
+      });
       renderMessages();
       if(currentMessages.length){const last=currentMessages[currentMessages.length-1];$("mouPreview").textContent=(last.sender===currentUser?"You: ":"")+((last.text||last.fileName||"Attachment")); }
     },err=>{console.error(err);toast("Firebase read failed. Check Realtime Database rules.")});
@@ -144,10 +175,45 @@
   function fileToDataURL(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
   async function attachFile(file){
     if(!file)return;
-    // Realtime Database is not a file-storage service; this demo limits attachments to 250 KB.
-    if(file.size>250*1024){toast("এই demo-তে ফাইল সর্বোচ্চ 250 KB. বড় ফাইলের জন্য Firebase Storage সেটআপ দরকার.");return}
-    try{const data=await fileToDataURL(file);let type=file.type.startsWith("image/")?"image":file.type.startsWith("video/")?"video":"file";await sendMessage({type,data,fileName:file.name})}
-    catch(e){toast("Could not attach this file.")}
+    try{
+      let data=await fileToDataURL(file);
+      let type=file.type.startsWith("image/")?"image":file.type.startsWith("video/")?"video":file.type.startsWith("audio/")?"audio":"file";
+
+      // Compress images in the browser so they fit the small demo attachment limit.
+      // Videos and other files still need Firebase Storage when larger than the limit.
+      if(type==="image"){
+        const img=new Image();
+        img.src=data;
+        await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject});
+        const canvas=document.createElement("canvas");
+        let w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
+        const maxSide=2000;
+        if(w>maxSide||h>maxSide){const scale=maxSide/Math.max(w,h);w=Math.round(w*scale);h=Math.round(h*scale)}
+        canvas.width=w;canvas.height=h;
+        const ctx=canvas.getContext("2d");
+        if(!ctx)throw new Error("Canvas unavailable");
+        ctx.drawImage(img,0,0,w,h);
+        // Lower quality / dimensions as needed until the encoded image fits.
+        let quality=0.86;
+        data=canvas.toDataURL("image/jpeg",quality);
+        while(data.length>1950*1024 && quality>0.45){
+          quality-=0.08;
+          data=canvas.toDataURL("image/jpeg",quality);
+        }
+        while(data.length>1950*1024 && Math.max(w,h)>600){
+          w=Math.max(1,Math.round(w*0.8));h=Math.max(1,Math.round(h*0.8));
+          canvas.width=w;canvas.height=h;
+          ctx.drawImage(img,0,0,w,h);
+          data=canvas.toDataURL("image/jpeg",Math.max(0.35,quality));
+        }
+      }
+
+      if(data.length>2000*1024){
+        toast(type==="image"?"ছবিটি ছোট করেও 2000 KB-এর মধ্যে আনা যায়নি।":"বড় ভিডিও/ফাইল পাঠাতে Firebase Storage সেটআপ দরকার (এই demo-তে 2000 KB limit)।");
+        return;
+      }
+      await sendMessage({type,data,fileName:file.name});
+    }catch(e){console.error(e);toast("ফাইল যোগ করা যায়নি। অন্য ফাইল দিয়ে চেষ্টা করো।")}
   }
   $("sendBtn").addEventListener("click",()=>sendMessage());
   $("messageInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});
@@ -158,7 +224,7 @@
   $("recordBtn").addEventListener("click",async()=>{
     if(recorder&&recorder.state==="recording"){recorder.stop();$("recordBtn").textContent="🎙";toast("Voice message ready…");return}
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast("Voice recording needs a supported browser and microphone permission.");return}
-    try{localStream=await navigator.mediaDevices.getUserMedia({audio:true});recordedChunks=[];recorder=new MediaRecorder(localStream);recorder.ondataavailable=e=>{if(e.data.size)recordedChunks.push(e.data)};recorder.onstop=async()=>{const blob=new Blob(recordedChunks,{type:recorder.mimeType||"audio/webm"});localStream.getTracks().forEach(t=>t.stop());if(blob.size>250*1024){toast("Voice clip is over 250 KB. Try a shorter recording.");return}const data=await fileToDataURL(new File([blob],"voice-message.webm",{type:blob.type}));await sendMessage({type:"audio",data,fileName:"voice-message.webm"})};recorder.start();$("recordBtn").textContent="⏹";toast("Recording… tap stop when finished")}
+    try{localStream=await navigator.mediaDevices.getUserMedia({audio:true});recordedChunks=[];recorder=new MediaRecorder(localStream);recorder.ondataavailable=e=>{if(e.data.size)recordedChunks.push(e.data)};recorder.onstop=async()=>{const blob=new Blob(recordedChunks,{type:recorder.mimeType||"audio/webm"});localStream.getTracks().forEach(t=>t.stop());if(blob.size>2000*1024){toast("Voice clip is over 2000 KB. Try a shorter recording.");return}const data=await fileToDataURL(new File([blob],"voice-message.webm",{type:blob.type}));await sendMessage({type:"audio",data,fileName:"voice-message.webm"})};recorder.start();$("recordBtn").textContent="⏹";toast("Recording… tap stop when finished")}
     catch(e){toast("Microphone permission denied or unavailable.")}
   });
   $("switchBtn").addEventListener("click",()=>modal("identityModal"));
@@ -184,6 +250,7 @@
     try{
       localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:!!video});
       peer=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
+      peer.ontrack=e=>attachRemoteTrack(e);
       localStream.getTracks().forEach(t=>peer.addTrack(t,localStream));
       const callId=db.ref("smMessenger/calls").push().key;activeCallId=callId;
       callRef=db.ref("smMessenger/calls/"+callId);
@@ -195,26 +262,49 @@
       callRef.child("calleeCandidates").on("child_added",s=>{if(peer&&s.val())peer.addIceCandidate(new RTCIceCandidate(s.val())).catch(()=>{})});
     }catch(e){console.error(e);toast("Call could not start. Allow camera/microphone and use HTTPS.");endCall(false)}
   }
+  function attachRemoteTrack(event){
+    const stream=event.streams&&event.streams[0];if(!stream)return;
+    const video=$("remoteVideo"),audio=$("remoteAudio");
+    audio.srcObject=stream;
+    if(stream.getVideoTracks().length){video.srcObject=stream;video.classList.add("show");video.play().catch(()=>{})}
+    audio.play().catch(()=>{});
+  }
   async function acceptCall(){
-    if(!db||!incomingCallData||!activeCallId)return;
+    if(!db||!activeCallId)return;
     try{
-      localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:!!incomingCallData.video});
-      peer=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
-      localStream.getTracks().forEach(t=>peer.addTrack(t,localStream));
       callRef=db.ref("smMessenger/calls/"+activeCallId);
+      const latest=(await callRef.once("value")).val();
+      if(!latest||!latest.offer){toast("Call setup is not ready yet. Please try again.");return}
+      incomingCallData=latest;
+      localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:!!latest.video});
+      peer=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
+      peer.ontrack=e=>attachRemoteTrack(e);
+      localStream.getTracks().forEach(t=>peer.addTrack(t,localStream));
       peer.onicecandidate=e=>{if(e.candidate)callRef.child("calleeCandidates").push(e.candidate.toJSON())};
-      await peer.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
+      await peer.setRemoteDescription(new RTCSessionDescription(latest.offer));
       const answer=await peer.createAnswer();await peer.setLocalDescription(answer);
       await callRef.child("answer").set({type:answer.type,sdp:answer.sdp});await callRef.update({status:"accepted"});
       callRef.child("callerCandidates").on("child_added",s=>{if(peer&&s.val())peer.addIceCandidate(new RTCIceCandidate(s.val())).catch(()=>{})});
-      $("callBanner").classList.add("show");$("callText").textContent="In call with "+incomingCallData.from;$("acceptCall").style.display="none";
-    }catch(e){console.error(e);toast("Could not accept call. Check permissions.");endCall(false)}
+      $("callBanner").classList.add("show");$("callText").textContent="In call with "+latest.from;$("acceptCall").style.display="none";
+      modal("incomingModal",false);
+    }catch(e){console.error(e);toast("Could not accept call. Check camera/microphone permission and HTTPS.");endCall(false)}
   }
   function listenIncoming(){
     if(!db)return;
     db.ref("smMessenger/calls").on("child_added",s=>{
-      const c=s.val();if(!c||c.to!==currentUser||c.status!=="calling")return;
-      activeCallId=s.key;incomingCallData=c;$("incomingTitle").textContent=(c.video?"Video":"Voice")+" call from "+c.from;$("incomingDesc").textContent=c.video?"Incoming video call. Accept to enable camera and microphone.":"Incoming voice call.";modal("incomingModal");
+      const c=s.val();if(!c||c.to!==currentUser||c.status==="ended"||c.status==="accepted")return;
+      activeCallId=s.key;
+      const incomingRef=db.ref("smMessenger/calls/"+s.key);
+      incomingRef.on("value",snap=>{
+        const latest=snap.val();
+        if(!latest||latest.status==="ended"){if(activeCallId===s.key)endCall(false);return}
+        incomingCallData=latest;
+        if(latest.to===currentUser&&latest.status==="calling"){
+          $("incomingTitle").textContent=(latest.video?"Video":"Audio")+" call from "+latest.from;
+          $("incomingDesc").textContent=latest.video?"Incoming video call. Accept to enable camera and microphone.":"Incoming audio call. Accept to enable microphone.";
+          modal("incomingModal");
+        }
+      });
     });
   }
   function endCall(update=true){
@@ -224,10 +314,14 @@
     if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
     if(callRef){callRef.child("callerCandidates").off();callRef.child("calleeCandidates").off()}
     callRef=null;callListener=null;candidateListener=null;activeCallId=null;incomingCallData=null;
-    $("callBanner").classList.remove("show");$("acceptCall").style.display="none";modal("incomingModal",false);
+    $("callBanner").classList.remove("show");$("acceptCall").style.display="none";$("remoteVideo").pause();$("remoteVideo").srcObject=null;$("remoteVideo").classList.remove("show");$("remoteAudio").srcObject=null;modal("incomingModal",false);
   }
   setIdentity(currentUser);
-  if(db){bindMessages();bindTyping();listenIncoming();bindPresence()}
+  if(db){
+    bindMessages();bindTyping();listenIncoming();bindPresence();
+    // While the app is open, check once per minute so messages disappear shortly after 24 hours.
+    setInterval(cleanupExpiredMessages, 60 * 1000);
+  }
   // On mobile, open the conversation immediately.
   if(window.matchMedia("(max-width:700px)").matches)appEl.classList.add("chat-open");
 })();
